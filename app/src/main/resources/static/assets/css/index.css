@@ -1,53 +1,240 @@
-/* this is the style sheet file for index.htlm  */
 
-/* 
-**Global Reset (`*`)**
+/* Universal Styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-* Remove all default margin and padding.
-* Use `border-box` for sizing to include padding and border in element size.
+html,
+body {
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
 
-**Base (`html, body`)**
+body {
+    min-height: 100vh;
+    color: #333;
+}
 
-* Set height to 100% for full viewport layout.
-* Use the `'Roboto'` sans-serif font for modern, clean typography.
+/* Layout and Wrappers */
+.container {
+    min-height: 100vh;
+    width: 100%;
+}
 
-**Layout Wrapper (`.wrapper`)**
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
 
-* Use a vertical flexbox layout.
-* Ensure the wrapper covers at least the full height of the screen (`min-height: 100vh`).
+.main-content {
+    flex: 1;
+    padding: 40px;
+    background-image: url('../images/defineRole/index.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
 
-**Heading (`h2`)**
+.main-content h2 {
+    margin-bottom: 25px;
+    text-align: center;
+    color: #003e3e;
+    font-size: 32px;
+}
 
-* Set a large font size (`48px`) for prominence.
-* Add a bottom margin of `50px` for spacing.
-* Use a dark teal color (`#003e3e`).
-* Make the font bold and use a blended font stack (`'Alegreya', 'Roboto', sans-serif`) for elegant styling.
+/* Search and Filter Layout */
+.search-filter-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 1000px;
+    margin: 0 auto 30px;
+}
 
-**Main Section (`.main-content`)**
+#searchBar {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    font-size: 16px;
+}
 
-* Allow the section to grow to fill space with `flex-grow: 1`.
-* Add `40px` of internal padding.
-* Center content both horizontally and vertically using `justify-content` and `align-items`.
-* Display items in a column direction.
-* Center all text.
-* Apply a full-screen background image with:
+#searchBar:focus {
+    outline: none;
+    border-color: #008080;
+    box-shadow: 0 0 4px rgba(0, 128, 128, 0.3);
+}
 
-  * `cover` size
-  * `center` positioning
-  * no repeat
-  * `fixed` attachment to keep image still during scroll
+.filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
 
-**Buttons (`button`)**
+.filter-section select {
+    flex: 1;
+    min-width: 180px;
+    padding: 11px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+}
 
-* Style with a teal green background (`#015c5d`) and white text.
-* Remove borders and round the corners (`12px`).
-* Use `10px 20px` padding and set width to `200px`.
-* Add a top margin of `10px` for spacing.
-* Enable pointer cursor and readable font size (`16px`).
-* On hover, change background color to bold red (`#A62B1F`).
+.filter-section select:focus {
+    outline: none;
+    border-color: #008080;
+}
 
-**Dashboard Buttons (`.dashboard-btn`)**
+/* Buttons */
+.button,
+.adminBtn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background-color: #006666;
+    color: #fff;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
-* Use the same base green background (`#015c5d`) as the default button.
-* On hover, darken the background to deep teal (`#003e3e`) for visual feedback.
- */
+.button:hover,
+.adminBtn:hover {
+    background-color: #004d4d;
+}
+
+/* Doctor Cards and Content */
+#content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 20px;
+    width: 100%;
+}
+
+.doctor-card {
+    flex: 1 1 280px;
+    max-width: 350px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.doctor-card h3 {
+    margin-bottom: 10px;
+    color: #003e3e;
+}
+
+.doctor-card p {
+    margin-bottom: 8px;
+    overflow-wrap: anywhere;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.55);
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.modal[hidden] {
+    display: none;
+}
+
+#modal-body {
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+    position: fixed;
+    top: 20px;
+    right: 25px;
+    color: #fff;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #ddd;
+}
+
+#modal-body input,
+#modal-body select,
+#modal-body textarea {
+    display: block;
+    width: 100%;
+    margin: 10px 0 15px;
+    padding: 11px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 15px;
+}
+
+#modal-body input:focus,
+#modal-body select:focus,
+#modal-body textarea:focus {
+    outline: none;
+    border-color: #008080;
+    box-shadow: 0 0 4px rgba(0, 128, 128, 0.25);
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 25px 15px;
+        background-attachment: scroll;
+    }
+
+    .main-content h2 {
+        font-size: 26px;
+    }
+
+    .filter-section {
+        flex-direction: column;
+    }
+
+    .filter-section select {
+        width: 100%;
+    }
+
+    .doctor-card {
+        flex-basis: 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 20px 10px;
+    }
+
+    #modal-body {
+        padding: 20px;
+    }
+}
