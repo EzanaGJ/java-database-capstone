@@ -1,16 +1,42 @@
 package com.project.back_end.services;
 
+@Service
 public class AppointmentService {
-// 1. **Add @Service Annotation**:
-//    - To indicate that this class is a service layer class for handling business logic.
-//    - The `@Service` annotation should be added before the class declaration to mark it as a Spring service component.
-//    - Instruction: Add `@Service` above the class definition.
 
-// 2. **Constructor Injection for Dependencies**:
-//    - The `AppointmentService` class requires several dependencies like `AppointmentRepository`, `Service`, `TokenService`, `PatientRepository`, and `DoctorRepository`.
-//    - These dependencies should be injected through the constructor.
-//    - Instruction: Ensure constructor injection is used for proper dependency management in Spring.
+    private final AppointmentRepository appointmentRepository;
+    private final PatientRepository patientRepository;
+    private final DoctorRepository doctorRepository;
+    private final TokenService tokenService;
 
+    @Transactional
+    public int bookAppointment(Appointment appointment) {
+        try {
+            appointmentRepository.save(appointment);
+            return 1;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    @Transactional
+    public ResponseEntity<Map<String, String>> updateAppointment(
+            Appointment appointment) {
+
+        Map<String, String> response = new HashMap<>();
+
+        Optional<Appointment> existing =
+                appointmentRepository.findById(appointment.getId());
+
+        if (existing.isEmpty()) {
+            response.put("message", "Appointment not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        appointmentRepository.save(appointment);
+        response.put("message", "Appointment updated successfully");
+        return ResponseEntity.ok(response);
+    }
+    
 // 3. **Add @Transactional Annotation for Methods that Modify Database**:
 //    - The methods that modify or update the database should be annotated with `@Transactional` to ensure atomicity and consistency of the operations.
 //    - Instruction: Add the `@Transactional` annotation above methods that interact with the database, especially those modifying data.
