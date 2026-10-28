@@ -4,6 +4,7 @@ package com.project.back_end.controllers;
 import com.project.back_end.models.Appointment;
 import com.project.back_end.services.AppointmentService;
 import com.project.back_end.services.Service;
+import java.time.LocalDate;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +34,7 @@ public class AppointmentController {
 
     @GetMapping("/{date}/{patientName}/{token}")
     public ResponseEntity<?> getAppointments(
-            @PathVariable String date,
+            @PathVariable LocalDate date,
             @PathVariable String patientName,
             @PathVariable String token) {
 
@@ -43,7 +44,7 @@ public class AppointmentController {
             return validation;
         }
 
-        return appointmentService.getAppointment(date, patientName);
+        return ResponseEntity.ok(appointmentService.getAppointment(patientName, date, token));
     }
 
     @PostMapping("/{token}")
@@ -105,6 +106,6 @@ public class AppointmentController {
             return validation;
         }
 
-        return appointmentService.cancelAppointment(id);
+        return appointmentService.cancelAppointment(id, token);
     }
 }
