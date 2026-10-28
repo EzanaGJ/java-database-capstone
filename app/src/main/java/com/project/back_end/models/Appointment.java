@@ -1,4 +1,17 @@
+package com.project.back_end.models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Future;
+import java.time.LocalDate;
+import java.time.LocalTime;
 @Entity
 public class Appointment {
     @Id

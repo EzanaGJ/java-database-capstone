@@ -1,4 +1,7 @@
 package com.project.back_end.DTO;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 public class AppointmentDTO {
     private Long id;
@@ -8,9 +11,9 @@ public class AppointmentDTO {
     private String patientName;
     private String patientEmail;
     private String patientPhone;
-    private String patienAddress;
-    private LocalDate appointmentTime;
-    private int statuss;
+    private String patientAddress;
+    private LocalDateTime appointmentTime;
+    private int status;
     private LocalDate appointmentDate;
     private LocalTime appointmentTimeOnly;
     private LocalDateTime endTime;
