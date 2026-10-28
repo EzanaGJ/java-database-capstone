@@ -38,10 +38,10 @@ public class PrescriptionService {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            Prescription prescription =
+            java.util.List<Prescription> prescriptions =
                     prescriptionRepository.findByAppointmentId(appointmentId);
 
-            response.put("prescription", prescription);
+            response.put("prescriptions", prescriptions);
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {

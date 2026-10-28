@@ -14,7 +14,7 @@ public class DashboardController {
 
     @GetMapping("/adminDashboard/{token}")
     public String adminDashboard(@PathVariable String token) {
-        if (service.validateToken(token, "admin").isEmpty()) {
+        if (!service.validateToken(token, "admin").getStatusCode().is2xxSuccessful()) {
             return "admin/adminDashboard";
         } else {
             return "redirect:http://localhost:8080";
@@ -23,7 +23,7 @@ public class DashboardController {
 
     @GetMapping("/doctorDashboard/{token}")
     public String doctorDashboard(@PathVariable String token) {
-        if (service.validateToken(token, "doctor").isEmpty()) {
+        if (!service.validateToken(token, "doctor").getStatusCode().is2xxSuccessful()) {
             return "doctor/doctorDashboard";
         } else {
             return "redirect:http://localhost:8080";

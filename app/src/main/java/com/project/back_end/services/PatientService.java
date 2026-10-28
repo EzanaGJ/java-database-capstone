@@ -46,8 +46,8 @@ public class PatientService {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            String email = tokenService.getEmailFromToken(token);
-            Patient patient = patientRepository.findByEmail(email).orElse(null);
+            String email = tokenService.extractIdentifier(token);
+            Patient patient = patientRepository.findByEmail(email);
 
             if (patient == null || !patient.getId().equals(id)) {
                 response.put("error", "Unauthorized");
@@ -88,7 +88,7 @@ public class PatientService {
             }
 
             List<Appointment> appointments =
-                    appointmentRepository.findByPatientIdAndStatus(id, status);
+                    appointmentRepository.findByPatient_IdAndStatusOrderByAppointmentTimeAsc(id, status);
 
             List<AppointmentDTO> appointmentDTOs = appointments.stream()
                     .map(AppointmentDTO::new)
@@ -145,7 +145,7 @@ public class PatientService {
 
             List<Appointment> appointments =
                     appointmentRepository
-                            .findByPatientIdAndDoctorNameContainingIgnoreCaseAndStatus(
+                            .filterByDoctorNameAndPatientIdAndStatus(
                                     patientId, name, status);
 
             List<AppointmentDTO> appointmentDTOs = appointments.stream()
@@ -166,8 +166,8 @@ public class PatientService {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            String email = tokenService.getEmailFromToken(token);
-            Patient patient = patientRepository.findByEmail(email).orElse(null);
+            String email = tokenService.extractIdentifier(token);
+            Patient patient = patientRepository.findByEmail(email);
 
             if (patient == null) {
                 response.put("error", "Patient not found");

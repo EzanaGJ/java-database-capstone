@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 @org.springframework.stereotype.Service
-@Service
 public class Service {
 
     private final TokenService tokenService;

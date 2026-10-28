@@ -120,7 +120,7 @@ public class DoctorService {
                         .body(response);
             }
 
-            String token = tokenService.generateToken(login.getEmail());
+            String token = tokenService.generateToken(login.getIdentifier());
             response.put("token", token);
             return ResponseEntity.ok(response);
 
