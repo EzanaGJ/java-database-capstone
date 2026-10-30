@@ -22,4 +22,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             @Param("specialty") String specialty);
 
     public List<Doctor> findBySpecialtyIgnoreCase(String specialty);
+
+    @Query("SELECT DISTINCT d FROM Doctor d LEFT JOIN FETCH d.availableTimes")
+List<Doctor> findAllWithAvailableTimes();
 }

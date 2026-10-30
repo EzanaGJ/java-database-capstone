@@ -12,7 +12,6 @@ import com.project.back_end.repo.PatientRepository;
 
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +52,7 @@ public class Service {
             }
 
             return ResponseEntity.ok(response);
+
         } catch (Exception e) {
             response.put("error", "Invalid or expired token");
             return ResponseEntity.status(401).body(response);
@@ -64,8 +64,8 @@ public class Service {
         Map<String, String> response = new HashMap<>();
 
         try {
-            Admin admin = adminRepository
-        .findByUsername(receivedAdmin.getUsername());
+            Admin admin = adminRepository.findByUsername(
+                    receivedAdmin.getUsername());
 
             if (admin == null
                     || !admin.getPassword().equals(receivedAdmin.getPassword())) {
@@ -77,7 +77,9 @@ public class Service {
             response.put("token", token);
 
             return ResponseEntity.ok(response);
+
         } catch (Exception e) {
+            e.printStackTrace();
             response.put("error", "Internal server error");
             return ResponseEntity.internalServerError().body(response);
         }
@@ -153,33 +155,34 @@ public class Service {
     }
 
     public boolean validatePatient(Patient patient) {
-    return patientRepository.findByEmailOrPhone(
-            patient.getEmail(), patient.getPhone()) == null;
-}
+        return patientRepository.findByEmailOrPhone(
+                patient.getEmail(), patient.getPhone()) == null;
+    }
 
     public ResponseEntity<Map<String, String>> validatePatientLogin(
-            Login login) {
-        Map<String, String> response = new HashMap<>();
+        Login login) {
+    Map<String, String> response = new HashMap<>();
 
-        try {
-            Patient patient = patientRepository.findByEmail(
-        login.getIdentifier());
+    try {
+        Patient patient = patientRepository.findByEmail(login.getEmail());
 
-            if (patient == null
-                    || !patient.getPassword().equals(login.getPassword())) {
-                response.put("error", "Invalid email or password");
-                return ResponseEntity.status(401).body(response);
-            }
-
-            String token = tokenService.generateToken(patient.getEmail());
-            response.put("token", token);
-
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            response.put("error", "Internal server error");
-            return ResponseEntity.internalServerError().body(response);
+        if (patient == null
+                || !patient.getPassword().equals(login.getPassword())) {
+            response.put("error", "Invalid email or password");
+            return ResponseEntity.status(401).body(response);
         }
+
+        String token = tokenService.generateToken(patient.getEmail());
+        response.put("token", token);
+
+        return ResponseEntity.ok(response);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.put("error", "Internal server error");
+        return ResponseEntity.internalServerError().body(response);
     }
+}
 
     public ResponseEntity<Map<String, Object>> filterPatient(
             String condition, String name, String token) {

@@ -86,9 +86,9 @@ public class DoctorService {
         }
     }
 
-    // 4. Retrieve all doctors
+    // 4. Retrieve all doctors with their available times
     public List<Doctor> getDoctors() {
-        return doctorRepository.findAll();
+        return doctorRepository.findAllWithAvailableTimes();
     }
 
     // 5. Delete a doctor and associated appointments
@@ -111,7 +111,7 @@ public class DoctorService {
         Map<String, String> response = new HashMap<>();
 
         try {
-            Doctor doctor = doctorRepository.findByEmail(login.getIdentifier());
+            Doctor doctor = doctorRepository.findByEmail(login.getEmail());
 
             if (doctor == null
                     || !doctor.getPassword().equals(login.getPassword())) {
@@ -120,11 +120,12 @@ public class DoctorService {
                         .body(response);
             }
 
-            String token = tokenService.generateToken(login.getIdentifier());
+            String token = tokenService.generateToken(login.getEmail());
             response.put("token", token);
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
+            e.printStackTrace();
             response.put("error", "Unable to validate doctor login");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(response);

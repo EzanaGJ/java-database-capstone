@@ -1,5 +1,3 @@
-
-/* Universal Styling */
 * {
     margin: 0;
     padding: 0;
@@ -12,229 +10,202 @@ body {
     font-family: Arial, sans-serif;
 }
 
-body {
-    min-height: 100vh;
-    color: #333;
-}
-
-/* Layout and Wrappers */
 .container {
     min-height: 100vh;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .wrapper {
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
 }
 
 .main-content {
     flex: 1;
-    padding: 40px;
-    background-image: url('../images/defineRole/index.png');
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    background-image: url("../images/adminDashboard/admin.png");
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;
     background-attachment: fixed;
 }
 
-.main-content h2 {
-    margin-bottom: 25px;
-    text-align: center;
-    color: #003e3e;
-    font-size: 32px;
-}
-
-/* Search and Filter Layout */
-.search-filter-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-width: 1000px;
-    margin: 0 auto 30px;
-}
-
 #searchBar {
-    width: 100%;
+    width: 80%;
+    max-width: 600px;
     padding: 12px 15px;
+    margin-bottom: 20px;
     border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: #fff;
+    border-radius: 8px;
     font-size: 16px;
 }
 
 #searchBar:focus {
     outline: none;
-    border-color: #008080;
-    box-shadow: 0 0 4px rgba(0, 128, 128, 0.3);
+    border-color: #015c5d;
 }
 
-.filter-section {
+.filter-container {
     display: flex;
-    flex-wrap: wrap;
+    justify-content: center;
     gap: 15px;
+    width: 80%;
+    margin-bottom: 30px;
 }
 
-.filter-section select {
-    flex: 1;
-    min-width: 180px;
-    padding: 11px 12px;
+.filter-container select {
+    padding: 10px 15px;
     border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: #fff;
+    border-radius: 8px;
     font-size: 15px;
     cursor: pointer;
 }
 
-.filter-section select:focus {
+.filter-container select:focus {
     outline: none;
-    border-color: #008080;
+    border-color: #015c5d;
 }
 
-/* Buttons */
 .button,
 .adminBtn {
     padding: 10px 20px;
     border: none;
     border-radius: 6px;
-    background-color: #006666;
-    color: #fff;
+    background-color: #015c5d;
+    color: white;
     font-size: 15px;
-    font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .button:hover,
 .adminBtn:hover {
-    background-color: #004d4d;
+    background-color: #017d7e;
 }
 
-/* Doctor Cards and Content */
 #content {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: stretch;
     gap: 20px;
     width: 100%;
 }
 
 .doctor-card {
-    flex: 1 1 280px;
-    max-width: 350px;
-    padding: 20px;
-    border-radius: 10px;
-    background-color: #fff;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
-}
-
-.doctor-card h3 {
-    margin-bottom: 10px;
-    color: #003e3e;
-}
-
-.doctor-card p {
-    margin-bottom: 8px;
-    overflow-wrap: anywhere;
-}
-
-/* Modal */
-.modal {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 280px;
     padding: 20px;
-    background-color: rgba(0, 0, 0, 0.55);
-    opacity: 1;
-    transition: opacity 0.3s ease;
-}
-
-.modal[hidden] {
-    display: none;
-}
-
-#modal-body {
-    width: 100%;
-    max-width: 500px;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 30px;
     border-radius: 10px;
-    background-color: #fff;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.doctor-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.doctor-info h3 {
+    color: #015c5d;
+    font-size: 20px;
+}
+
+.card-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.card-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background-color: #015c5d;
+    color: white;
+    cursor: pointer;
+}
+
+.card-actions button:hover {
+    background-color: #017d7e;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .close {
-    position: fixed;
-    top: 20px;
+    position: absolute;
+    top: 15px;
     right: 25px;
-    color: #fff;
-    font-size: 35px;
+    color: white;
+    font-size: 30px;
     font-weight: bold;
     cursor: pointer;
 }
 
 .close:hover {
-    color: #ddd;
+    color: #ccc;
+}
+
+#modal-body {
+    width: 90%;
+    max-width: 500px;
+    padding: 25px;
+    border-radius: 10px;
+    background-color: white;
 }
 
 #modal-body input,
-#modal-body select,
-#modal-body textarea {
-    display: block;
+#modal-body select {
     width: 100%;
-    margin: 10px 0 15px;
-    padding: 11px 12px;
+    padding: 10px;
+    margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-family: inherit;
-    font-size: 15px;
 }
 
 #modal-body input:focus,
-#modal-body select:focus,
-#modal-body textarea:focus {
+#modal-body select:focus {
     outline: none;
-    border-color: #008080;
-    box-shadow: 0 0 4px rgba(0, 128, 128, 0.25);
+    border-color: #015c5d;
 }
 
-/* Responsive Layout */
-@media (max-width: 768px) {
-    .main-content {
-        padding: 25px 15px;
-        background-attachment: scroll;
-    }
-
-    .main-content h2 {
-        font-size: 26px;
-    }
-
-    .filter-section {
+@media screen and (max-width: 768px) {
+    .filter-container {
         flex-direction: column;
+        width: 80%;
     }
 
-    .filter-section select {
+    .filter-container select {
         width: 100%;
     }
 
+    #searchBar {
+        width: 80%;
+    }
+
     .doctor-card {
-        flex-basis: 100%;
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    .main-content {
-        padding: 20px 10px;
-    }
-
-    #modal-body {
-        padding: 20px;
+        width: 90%;
     }
 }

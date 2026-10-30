@@ -1,39 +1,34 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Dashboard</title>
 
-    <link rel="icon" href="../assets/images/logo/logo.png" />
-
-    <link rel="stylesheet" href="../assets/css/adminDashboard.css" />
-    <link rel="stylesheet" href="../assets/css/style.css" />
-    <link rel="stylesheet" href="../assets/css/patientDashboard.css" />
+    <link rel="icon" href="../assets/images/favicon.ico">
+    <link rel="stylesheet" href="../assets/css/adminDashboard.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/patientDashboard.css">
 
     <script src="../js/render.js" defer></script>
     <script src="../js/util.js" defer></script>
     <script src="../js/components/header.js" defer></script>
     <script src="../js/components/footer.js" defer></script>
     <script type="module" src="../js/components/modals.js"></script>
-    <script type="module" src="../js/patientDashboard.js" defer></script>
 </head>
-
 <body onload="renderContent()">
     <div class="container">
         <div class="wrapper">
+
             <div id="header"></div>
 
             <main class="main-content">
-                <h2>Find a Doctor</h2>
-
                 <input
                     type="text"
                     id="searchBar"
                     class="searchBar"
                     placeholder="Search Bar for custom output"
-                />
+                >
 
                 <div class="filter-wrapper">
                     <select class="filter-select" id="filterTime">
@@ -44,10 +39,11 @@
 
                     <select class="filter-select" id="filterSpecialty">
                         <option value="">All Specialties</option>
-                        <option value="Cardiology">Cardiology</option>
-                        <option value="Dermatology">Dermatology</option>
-                        <option value="Neurology">Neurology</option>
-                        <option value="Pediatrics">Pediatrics</option>
+                        <option value="Cardiologist">Cardiologist</option>
+                        <option value="Dermatologist">Dermatologist</option>
+                        <option value="Neurologist">Neurologist</option>
+                        <option value="Pediatrician">Pediatrician</option>
+                        <option value="General Practitioner">General Practitioner</option>
                     </select>
                 </div>
 
@@ -55,6 +51,7 @@
             </main>
 
             <div id="footer"></div>
+
         </div>
     </div>
 
@@ -64,6 +61,7 @@
             <div id="modal-body"></div>
         </div>
     </div>
+
+    <script type="module" src="../js/patientDashboard.js" defer></script>
 </body>
 </html>
-```

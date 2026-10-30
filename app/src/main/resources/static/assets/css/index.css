@@ -1,5 +1,3 @@
-
-/* Universal Styling */
 * {
     margin: 0;
     padding: 0;
@@ -9,265 +7,78 @@
 html,
 body {
     height: 100%;
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
 }
 
-body {
-    min-height: 100vh;
-    color: #333;
-}
-
-/* Layout and Wrappers */
 .container {
     min-height: 100vh;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .wrapper {
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
 }
 
 .main-content {
     flex: 1;
-    padding: 40px;
-    background-image: url('../images/defineRole/index.png');
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+    background-image: url("../images/defineRole/index.png");
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;
     background-attachment: fixed;
 }
 
 .main-content h2 {
-    margin-bottom: 25px;
-    text-align: center;
-    color: #003e3e;
-    font-size: 32px;
+    font-size: 36px;
+    font-weight: bold;
+    color: #015c5d;
+    margin-bottom: 30px;
 }
 
-/* Search and Filter Layout */
-.search-filter-container {
+.role-buttons {
     display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-width: 1000px;
-    margin: 0 auto 30px;
-}
-
-#searchBar {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: #fff;
-    font-size: 16px;
-}
-
-#searchBar:focus {
-    outline: none;
-    border-color: #008080;
-    box-shadow: 0 0 4px rgba(0, 128, 128, 0.3);
-}
-
-.filter-section {
-    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
     flex-wrap: wrap;
-    gap: 15px;
 }
 
-.filter-section select {
-    flex: 1;
-    min-width: 180px;
-    padding: 11px 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: #fff;
-    font-size: 15px;
-    cursor: pointer;
-}
-
-.filter-section select:focus {
-    outline: none;
-    border-color: #008080;
-}
-
-/* Buttons */
-.button,
-.adminBtn {
-    padding: 10px 20px;
+.role-buttons button {
+    min-width: 150px;
+    padding: 15px 30px;
     border: none;
-    border-radius: 6px;
-    background-color: #006666;
-    color: #fff;
-    font-size: 15px;
+    border-radius: 8px;
+    background-color: #015c5d;
+    color: white;
+    font-size: 18px;
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.button:hover,
-.adminBtn:hover {
-    background-color: #004d4d;
+.role-buttons button:hover {
+    background-color: #017d7e;
 }
 
-/* Doctor Cards and Content */
-#content {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: stretch;
-    gap: 20px;
-    width: 100%;
-}
-
-.doctor-card {
-    flex: 1 1 280px;
-    max-width: 350px;
-    padding: 20px;
-    border-radius: 10px;
-    background-color: #fff;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
-}
-
-.doctor-card h3 {
-    margin-bottom: 10px;
-    color: #003e3e;
-}
-
-.doctor-card p {
-    margin-bottom: 8px;
-    overflow-wrap: anywhere;
-}
-
-/* Modal */
-.modal {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background-color: rgba(0, 0, 0, 0.55);
-    opacity: 1;
-    transition: opacity 0.3s ease;
-}
-
-.modal[hidden] {
-    display: none;
-}
-
-#modal-body {
-    width: 100%;
-    max-width: 500px;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 30px;
-    border-radius: 10px;
-    background-color: #fff;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-}
-
-.close {
-    position: fixed;
-    top: 20px;
-    right: 25px;
-    color: #fff;
-    font-size: 35px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover {
-    color: #ddd;
-}
-
-#modal-body input,
-#modal-body select,
-#modal-body textarea {
-    display: block;
-    width: 100%;
-    margin: 10px 0 15px;
-    padding: 11px 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-family: inherit;
-    font-size: 15px;
-}
-
-#modal-body input:focus,
-#modal-body select:focus,
-#modal-body textarea:focus {
-    outline: none;
-    border-color: #008080;
-    box-shadow: 0 0 4px rgba(0, 128, 128, 0.25);
-}
-
-/* Responsive Layout */
-@media (max-width: 768px) {
-    .main-content {
-        padding: 25px 15px;
-        background-attachment: scroll;
-    }
-
+@media screen and (max-width: 600px) {
     .main-content h2 {
-        font-size: 26px;
+        font-size: 28px;
     }
 
-    .filter-section {
+    .role-buttons {
         flex-direction: column;
-    }
-
-    .filter-section select {
         width: 100%;
     }
 
-    .doctor-card {
-        flex-basis: 100%;
-        max-width: 100%;
+    .role-buttons button {
+        width: 80%;
     }
-}
-
-@media (max-width: 480px) {
-    .main-content {
-        padding: 20px 10px;
-    }
-
-    #modal-body {
-        padding: 20px;
-    }
-}
-/* Role selection buttons */
-.main-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#roleHeading {
-    width: 100%;
-    margin-bottom: 25px;
-}
-
-#adminId,
-#doctorId,
-#patientId {
-    display: block;
-    width: 240px;
-    padding: 12px 20px;
-    margin: 4px 0;
-    border: none;
-    border-radius: 8px;
-    background-color: #006666;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-#adminId:hover,
-#doctorId:hover,
-#patientId:hover {
-    background-color: #004d4d;
 }

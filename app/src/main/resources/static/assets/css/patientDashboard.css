@@ -1,96 +1,185 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.searchBar {
+    width: 80%;
+    max-width: 600px;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.searchBar:focus {
+    outline: none;
+    border-color: #015c5d;
+}
+
+.filter-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    width: 80%;
+    margin-bottom: 30px;
+}
+
+.filter-select {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #015c5d;
+}
+
+#content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+}
+
 .card-actions {
-    background-color: #003e3e;
-    color: #ffffff;
-    text-align: center;
-    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    background-color: #015c5d;
+    color: white;
     transition: background-color 0.3s ease;
 }
 
 .card-actions:hover {
-    background-color: #002d2d;
+    background-color: #014748;
 }
 
-/* Ripple effect */
 .ripple {
     position: fixed;
-    width: 20px;
-    height: 20px;
     border-radius: 50%;
-    background-color: rgba(0, 62, 62, 0.3);
     transform: scale(0);
+    animation: ripple 0.6s linear;
     pointer-events: none;
-    animation: ripple-animation 0.6s ease-out forwards;
-    z-index: 9999;
 }
 
-@keyframes ripple-animation {
+@keyframes ripple {
     to {
-        transform: scale(15);
+        transform: scale(4);
         opacity: 0;
     }
 }
 
-/* Bottom booking modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 500px;
+    margin: 10% auto;
+    padding: 25px;
+    border-radius: 10px;
+    background-color: white;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
 .modalApp {
     position: fixed;
     bottom: 0;
     left: 50%;
-    width: 100%;
+    width: 90%;
     max-width: 500px;
     padding: 25px;
-    background-color: #ffffff;
+    background-color: white;
     border-radius: 15px 15px 0 0;
-    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2);
     transform: translate(-50%, 100%);
-    transition: transform 0.4s ease;
-    z-index: 1000;
+    transition: transform 0.3s ease;
 }
 
 .modalApp.active {
     transform: translate(-50%, 0);
 }
 
-/* Booking form fields */
 .modalApp input,
-.modalApp select,
-.modalApp textarea {
+.modalApp select {
     display: block;
     width: 90%;
     margin: 12px auto;
-    padding: 12px;
-    border: 1px solid #cccccc;
-    border-radius: 6px;
-    font-size: 16px;
-    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
-/* Booking confirmation button */
-.modalApp .confirm-btn {
+.modalApp input:focus,
+.modalApp select:focus {
+    outline: none;
+    border-color: #015c5d;
+}
+
+.modalApp button {
     display: block;
-    width: 90%;
-    margin: 20px auto 0;
+    margin: 15px auto 0;
     padding: 12px 20px;
     border: none;
     border-radius: 6px;
-    background-color: #003e3e;
-    color: #ffffff;
-    font-size: 16px;
+    background-color: #015c5d;
+    color: white;
     cursor: pointer;
     transition: filter 0.3s ease;
 }
 
-.modalApp .confirm-btn:hover {
+.modalApp button:hover {
     filter: brightness(1.2);
 }
 
-/* Responsive layout */
-@media (max-width: 600px) {
-    .modalApp {
-        max-width: 100%;
-        padding: 20px 10px;
+@media screen and (max-width: 768px) {
+    .filter-wrapper {
+        flex-direction: column;
+        width: 90%;
     }
 
-    .card-actions {
-        padding: 12px;
+    .filter-select {
+        width: 100%;
+    }
+
+    .searchBar {
+        width: 90%;
+    }
+
+    .modal-content {
+        margin: 20% auto;
     }
 }
