@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,9 +16,6 @@
     <script th:src="@{/js/util.js}" defer></script>
     <script th:src="@{/js/components/header.js}" defer></script>
     <script th:src="@{/js/components/footer.js}" defer></script>
-    <script th:src="@{/js/components/patientRows.js}" defer></script>
-    <script type="module" th:src="@{/js/services/patientServices.js}"></script>
-    <script th:src="@{/js/doctorDashboard.js}" defer></script>
 </head>
 
 <body>
@@ -28,31 +25,31 @@
             <div id="header"></div>
 
             <main class="main-content">
+
                 <h2>Doctor Dashboard</h2>
 
-                <div class="search-filter-container">
+                <input
+                    type="text"
+                    id="searchBar"
+                    placeholder="Search by patient name"
+                >
+
+                <div class="filter-container">
+
+                    <button id="todayButton" class="button" type="button">
+                        Today's Appointments
+                    </button>
+
                     <input
-                        type="text"
-                        id="searchBar"
-                        placeholder="Search by patient name"
-                        aria-label="Search patients"
+                        type="date"
+                        id="datePicker"
                     >
 
-                    <div class="filter-section">
-                        <button id="todayAppointmentsBtn" type="button">
-                            Today's Appointments
-                        </button>
-
-                        <input
-                            type="date"
-                            id="appointmentDate"
-                            aria-label="Select appointment date"
-                        >
-                    </div>
                 </div>
 
                 <div class="table-container">
                     <table id="patientTable">
+
                         <thead>
                             <tr>
                                 <th>Patient ID</th>
@@ -66,13 +63,18 @@
                         <tbody id="patientTableBody">
                             <!-- Patient records are populated dynamically -->
                         </tbody>
+
                     </table>
                 </div>
+
             </main>
 
             <div id="footer"></div>
 
         </div>
     </div>
+
+    <script type="module" th:src="@{/js/doctorDashboard.js}"></script>
+
 </body>
 </html>

@@ -1,26 +1,36 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clinic Management System</title>
 
-    <link rel="icon" href="./assets/images/favicon.ico">
+    <title>Smart Clinic</title>
+
+    <link rel="icon" href="./assets/images/logo/logo.png">
+
     <link rel="stylesheet" href="./assets/css/index.css">
     <link rel="stylesheet" href="./assets/css/style.css">
 
+    <!-- Utility scripts -->
     <script src="./js/util.js" defer></script>
     <script src="./js/render.js" defer></script>
+
+    <!-- Header and footer components -->
     <script src="./js/components/header.js" defer></script>
     <script src="./js/components/footer.js" defer></script>
 </head>
+
 <body>
     <div class="container">
         <div class="wrapper">
 
+            <!-- Header -->
             <div id="header"></div>
 
+            <!-- Main content -->
             <main class="main-content">
+
                 <h2>Select Your Role</h2>
 
                 <div class="role-buttons">
@@ -36,18 +46,25 @@
                         Patient
                     </button>
                 </div>
+
             </main>
 
+            <!-- Modal -->
+            <div id="modal" class="modal" hidden>
+                <div class="modal-content">
+                    <span id="closeModal" class="close">&times;</span>
+                    <div id="modal-body"></div>
+                </div>
+            </div>
+
+            <!-- Footer -->
             <div id="footer"></div>
 
         </div>
     </div>
 
-    <div id="modal" class="modal">
-        <span id="closeModal" class="close">&times;</span>
-        <div id="modal-body"></div>
-    </div>
+    <!-- Role selection and modal service -->
+    <script type="module" src="./js/services/index.js"></script>
 
-    <script type="module" src="../js/services/index.js" defer></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
@@ -27,17 +27,17 @@
                     <input
                         type="text"
                         id="searchBar"
-                        placeholder="search by doctor name"
+                        placeholder="Search by doctor name"
                     >
 
                     <div class="filter-section">
-                        <select id="sortByTime" aria-label="Sort by time">
+                        <select id="filterTime" aria-label="Sort by time">
                             <option value="">Sort by time</option>
                             <option value="asc">Oldest first</option>
                             <option value="desc">Newest first</option>
                         </select>
 
-                        <select id="filterBySpecialty" aria-label="Filter by specialty">
+                        <select id="filterSpecialty" aria-label="Filter by specialty">
                             <option value="">All specialties</option>
                         </select>
                     </div>
@@ -56,8 +56,7 @@
         <div id="modal-body"></div>
     </div>
 
-    <script type="module" src="/js/services/doctorServices.js"></script>
-    <script type="module" src="/js/adminDashboard.js"></script>
-    <script type="module" src="/js/components/doctorCard.js"></script>
+    <script type="module" th:src="@{/js/adminDashboard.js}"></script>
+
 </body>
 </html>

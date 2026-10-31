@@ -4,137 +4,99 @@
     box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
     height: 100%;
     font-family: Arial, sans-serif;
 }
 
 .container {
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
 }
 
 .wrapper {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background-image: url('/assets/images/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .main-content {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px 20px;
-    background-image: url("../images/adminDashboard/admin.png");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    padding: 30px;
+    text-align: center;
 }
 
-#searchBar {
-    width: 80%;
-    max-width: 600px;
-    padding: 12px 15px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px;
+.main-content h2 {
+    margin-bottom: 25px;
+    color: #333;
 }
 
-#searchBar:focus {
-    outline: none;
-    border-color: #015c5d;
-}
-
-.filter-container {
+.search-filter-container {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 15px;
-    width: 80%;
+    flex-wrap: wrap;
     margin-bottom: 30px;
 }
 
-.filter-container select {
+#searchBar,
+.filter-section select {
     padding: 10px 15px;
     border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 15px;
-    cursor: pointer;
+    border-radius: 6px;
+    font-size: 14px;
 }
 
-.filter-container select:focus {
+#searchBar {
+    width: 280px;
+}
+
+.filter-section {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-section select {
+    min-width: 160px;
+    background-color: white;
+}
+
+#searchBar:focus,
+.filter-section select:focus {
     outline: none;
-    border-color: #015c5d;
+    border-color: #3498db;
 }
 
 .button,
 .adminBtn {
-    padding: 10px 20px;
+    padding: 10px 18px;
     border: none;
     border-radius: 6px;
-    background-color: #015c5d;
+    background-color: #3498db;
     color: white;
-    font-size: 15px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s ease;
 }
 
 .button:hover,
 .adminBtn:hover {
-    background-color: #017d7e;
+    background-color: #217dbb;
 }
 
 #content {
     display: flex;
+    justify-content: center;
+    align-items: stretch;
     flex-wrap: wrap;
-    justify-content: center;
     gap: 20px;
-    width: 100%;
-}
-
-.doctor-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 280px;
     padding: 20px;
-    border-radius: 10px;
-    background-color: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.doctor-info {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.doctor-info h3 {
-    color: #015c5d;
-    font-size: 20px;
-}
-
-.card-actions {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.card-actions button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    background-color: #015c5d;
-    color: white;
-    cursor: pointer;
-}
-
-.card-actions button:hover {
-    background-color: #017d7e;
-}
+/* Modal */
 
 .modal {
     display: none;
@@ -148,64 +110,63 @@ body {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.modal.show {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.modal:not([hidden]) {
+    display: block;
+}
+
+#modal-body {
+    background-color: white;
+    margin: 10% auto;
+    padding: 25px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 450px;
 }
 
 .close {
     position: absolute;
-    top: 15px;
-    right: 25px;
+    top: 20px;
+    right: 30px;
     color: white;
     font-size: 30px;
-    font-weight: bold;
     cursor: pointer;
 }
 
-.close:hover {
-    color: #ccc;
-}
+/* Modal inputs */
 
-#modal-body {
-    width: 90%;
-    max-width: 500px;
-    padding: 25px;
-    border-radius: 10px;
-    background-color: white;
-}
-
-#modal-body input,
-#modal-body select {
+#modal-body input {
+    display: block;
     width: 100%;
     padding: 10px;
-    margin: 10px 0;
+    margin: 12px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
 
-#modal-body input:focus,
-#modal-body select:focus {
+#modal-body input:focus {
     outline: none;
-    border-color: #015c5d;
+    border-color: #3498db;
 }
 
-@media screen and (max-width: 768px) {
-    .filter-container {
-        flex-direction: column;
-        width: 80%;
+/* Responsive layout */
+
+@media (max-width: 600px) {
+    .main-content {
+        padding: 15px;
     }
 
-    .filter-container select {
+    .search-filter-container,
+    .filter-section {
+        flex-direction: column;
         width: 100%;
     }
 
-    #searchBar {
-        width: 80%;
+    #searchBar,
+    .filter-section select {
+        width: 100%;
     }
 
-    .doctor-card {
-        width: 90%;
+    #content {
+        padding: 10px;
     }
 }

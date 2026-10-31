@@ -34,6 +34,10 @@ body {
     background-attachment: fixed;
 }
 
+.main-content h2 {
+    margin-bottom: 25px;
+}
+
 #searchBar {
     width: 80%;
     max-width: 600px;
@@ -58,7 +62,7 @@ body {
     margin-bottom: 30px;
 }
 
-#appointmentDate {
+#datePicker {
     padding: 10px 15px;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -80,8 +84,13 @@ body {
     background-color: #017d7e;
 }
 
-#patientTable {
+.table-container {
     width: 90%;
+    overflow-x: auto;
+}
+
+#patientTable {
+    width: 100%;
     border-collapse: collapse;
     background-color: rgba(255, 255, 255, 0.9);
 }
@@ -138,8 +147,11 @@ body {
         width: 90%;
     }
 
-    #patientTable {
+    .table-container {
         width: 100%;
+    }
+
+    #patientTable {
         font-size: 13px;
     }
 
