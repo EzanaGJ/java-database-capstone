@@ -1,62 +1,101 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Admin Dashboard</title>
 
     <link rel="stylesheet" th:href="@{/assets/css/adminDashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/style.css}">
 
+    <!-- Utility and rendering scripts -->
     <script th:src="@{/js/render.js}" defer></script>
     <script th:src="@{/js/util.js}" defer></script>
+
+    <!-- Header and footer components -->
     <script th:src="@{/js/components/header.js}" defer></script>
     <script th:src="@{/js/components/footer.js}" defer></script>
 </head>
 
 <body>
+
     <div class="container">
         <div class="wrapper">
 
+            <!-- Header -->
             <div id="header"></div>
 
+            <!-- Main content -->
             <main class="main-content">
-                <h2>Admin Dashboard</h2>
 
-                <div class="search-filter-container">
-                    <input
-                        type="text"
-                        id="searchBar"
-                        placeholder="Search by doctor name"
-                    >
+                <section class="dashboard-heading">
+                    <h1>Admin Dashboard</h1>
+                    <p>Manage doctors and view their availability.</p>
+                </section>
 
-                    <div class="filter-section">
-                        <select id="filterTime" aria-label="Sort by time">
-                            <option value="">Sort by time</option>
-                            <option value="asc">Oldest first</option>
-                            <option value="desc">Newest first</option>
-                        </select>
+                <!-- Search and filters -->
+                <section class="dashboard-controls">
 
-                        <select id="filterSpecialty" aria-label="Filter by specialty">
-                            <option value="">All specialties</option>
-                        </select>
+                    <div class="search-container">
+                        <input
+                            type="text"
+                            id="searchBar"
+                            placeholder="Search by doctor name"
+                        >
                     </div>
-                </div>
 
-                <div id="content"></div>
+                    <div class="filter-container">
+
+                        <select id="filterTime">
+                            <option value="">Sort by time</option>
+                            <option value="morning">Morning</option>
+                            <option value="afternoon">Afternoon</option>
+                        </select>
+
+                        <select id="filterSpecialty">
+                            <option value="">All Specialties</option>
+                        </select>
+
+                    </div>
+
+                </section>
+
+                <!-- Doctor cards are dynamically inserted here -->
+                <section id="content" class="doctor-list"></section>
+
             </main>
 
+            <!-- Footer -->
             <div id="footer"></div>
 
         </div>
     </div>
 
+    <!-- Add Doctor Modal -->
     <div id="modal" class="modal" hidden>
-        <span id="closeModal" class="close">&times;</span>
-        <div id="modal-body"></div>
+        <div class="modal-content">
+
+            <span id="closeModal" class="close">&times;</span>
+
+            <div id="modal-body"></div>
+
+        </div>
     </div>
 
-    <script type="module" th:src="@{/js/adminDashboard.js}"></script>
+    <!-- Admin dashboard services -->
+    <script
+        type="module"
+        th:src="@{/js/services/adminDashboard.js}"
+        defer>
+    </script>
+
+    <script
+        type="module"
+        th:src="@{/js/components/doctorCard.js}"
+        defer>
+    </script>
 
 </body>
 </html>

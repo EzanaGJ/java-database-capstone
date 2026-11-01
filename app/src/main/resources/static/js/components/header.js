@@ -1,3 +1,4 @@
+
 function renderHeader() {
     const headerDiv = document.getElementById("header");
 
@@ -5,16 +6,16 @@ function renderHeader() {
         return;
     }
 
-    // Clear the session when the homepage is opened.
     if (window.location.pathname.endsWith("/")) {
         localStorage.removeItem("userRole");
         localStorage.removeItem("token");
+        headerDiv.innerHTML = "";
+        return;
     }
 
     const role = localStorage.getItem("userRole");
     const token = localStorage.getItem("token");
 
-    // Check for an invalid or expired session.
     if (
         (role === "loggedPatient" || role === "admin" || role === "doctor") &&
         !token
@@ -30,18 +31,18 @@ function renderHeader() {
     if (role === "admin") {
         headerContent = `
             <header class="header">
-                <a href="/" class="logo">Smart Clinic</a>
-                <nav>
-                    <button
-                        id="addDocBtn"
-                        class="adminBtn"
-                        onclick="openModal('addDoctor')"
-                    >Add Doctor</button>
+            <a href="/" class="logo">
+            <img src="/assets/images/logo/logo.png" alt="Smart Clinic Logo" class="logo-img">
+        </a>                <nav>
+                    <button id="addDocBtn" class="adminBtn">Add Doctor</button>
                     <a href="#" id="logoutBtn">Logout</a>
                 </nav>
             </header>
         `;
-    } else if (role === "doctor") {
+    }
+
+    // Doctor header
+    else if (role === "doctor") {
         headerContent = `
             <header class="header">
                 <a href="/" class="logo">Smart Clinic</a>
@@ -51,7 +52,10 @@ function renderHeader() {
                 </nav>
             </header>
         `;
-    } else if (role === "patient") {
+    }
+
+    // Patient header
+    else if (role === "patient") {
         headerContent = `
             <header class="header">
                 <a href="/" class="logo">Smart Clinic</a>
@@ -61,7 +65,10 @@ function renderHeader() {
                 </nav>
             </header>
         `;
-    } else if (role === "loggedPatient") {
+    }
+
+    // Logged-in patient header
+    else if (role === "loggedPatient") {
         headerContent = `
             <header class="header">
                 <a href="/" class="logo">Smart Clinic</a>
@@ -75,6 +82,8 @@ function renderHeader() {
     }
 
     headerDiv.innerHTML = headerContent;
+
+    // Attach listeners after inserting the header.
     attachHeaderButtonListeners();
 }
 
@@ -108,19 +117,21 @@ function attachHeaderButtonListeners() {
     }
 }
 
+// Logout admin and doctor.
 function logout() {
     localStorage.removeItem("token");
     localStorage.removeItem("userRole");
     window.location.href = "/";
 }
 
+// Logout patient and return to the patient login page.
 function logoutPatient() {
     localStorage.removeItem("token");
     localStorage.setItem("userRole", "patient");
     window.location.href = "/pages/patientDashboard.html";
 }
 
-// Make functions accessible to inline handlers and other scripts.
+// Make functions accessible to other scripts.
 window.renderHeader = renderHeader;
 window.logout = logout;
 window.logoutPatient = logoutPatient;
