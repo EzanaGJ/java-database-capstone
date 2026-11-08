@@ -221,3 +221,32 @@ body {
         gap: 25px;
     }
 }
+/* Add Doctor Button */
+.adminBtn {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #ffffff;
+    border: none;
+    padding: 11px 22px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 3px 8px #003e3e(37, 99, 235, 0.2);
+}
+
+.adminBtn:hover {
+    background: linear-gradient(135deg, #003e3e, #003e3e);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(37, 99, 235, 0.3);
+}
+
+.adminBtn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(37, 99, 235, 0.2);
+}
+
+.adminBtn:focus-visible {
+    outline: 3px solid rgba(59, 130, 246, 0.35);
+    outline-offset: 3px;
+}

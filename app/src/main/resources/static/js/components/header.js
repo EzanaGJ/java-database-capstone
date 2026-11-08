@@ -1,4 +1,6 @@
 
+import { openModal } from './modals.js';
+
 function renderHeader() {
     const headerDiv = document.getElementById("header");
 
@@ -6,6 +8,7 @@ function renderHeader() {
         return;
     }
 
+    // Original homepage condition
     if (window.location.pathname.endsWith("/")) {
         localStorage.removeItem("userRole");
         localStorage.removeItem("token");
@@ -16,6 +19,7 @@ function renderHeader() {
     const role = localStorage.getItem("userRole");
     const token = localStorage.getItem("token");
 
+    // Original session validation
     if (
         (role === "loggedPatient" || role === "admin" || role === "doctor") &&
         !token
@@ -31,18 +35,22 @@ function renderHeader() {
     if (role === "admin") {
         headerContent = `
             <header class="header">
-            <a href="/" class="logo">
-            <img src="/assets/images/logo/logo.png" alt="Smart Clinic Logo" class="logo-img">
-        </a>                <nav>
-                    <button id="addDocBtn" class="adminBtn">Add Doctor</button>
+                <a href="/" class="logo">
+                    <img src="/assets/images/logo/logo.png"
+                         alt="Smart Clinic Logo"
+                         class="logo-img">
+                </a>
+
+                <nav>
+                    <button id="addDocBtn" class="adminBtn" type="button">
+                        Add Doctor
+                    </button>
                     <a href="#" id="logoutBtn">Logout</a>
                 </nav>
             </header>
         `;
-    }
 
-    // Doctor header
-    else if (role === "doctor") {
+    } else if (role === "doctor") {
         headerContent = `
             <header class="header">
                 <a href="/" class="logo">Smart Clinic</a>
@@ -52,23 +60,21 @@ function renderHeader() {
                 </nav>
             </header>
         `;
-    }
 
-    // Patient header
-    else if (role === "patient") {
+    } else if (role === "patient") {
         headerContent = `
             <header class="header">
                 <a href="/" class="logo">Smart Clinic</a>
                 <nav>
                     <a href="/pages/patientDashboard.html">Login</a>
-                    <a href="/pages/patientDashboard.html" id="signupBtn">Sign Up</a>
+                    <a href="/pages/patientDashboard.html" id="signupBtn">
+                        Sign Up
+                    </a>
                 </nav>
             </header>
         `;
-    }
 
-    // Logged-in patient header
-    else if (role === "loggedPatient") {
+    } else if (role === "loggedPatient") {
         headerContent = `
             <header class="header">
                 <a href="/" class="logo">Smart Clinic</a>
@@ -83,11 +89,11 @@ function renderHeader() {
 
     headerDiv.innerHTML = headerContent;
 
-    // Attach listeners after inserting the header.
     attachHeaderButtonListeners();
 }
 
 function attachHeaderButtonListeners() {
+
     const logoutBtn = document.getElementById("logoutBtn");
 
     if (logoutBtn) {
@@ -106,32 +112,28 @@ function attachHeaderButtonListeners() {
         });
     }
 
+    // Add Doctor button
     const addDocBtn = document.getElementById("addDocBtn");
 
     if (addDocBtn) {
         addDocBtn.addEventListener("click", function () {
-            if (typeof openModal === "function") {
-                openModal("addDoctor");
-            }
+            openModal("addDoctor");
         });
     }
 }
 
-// Logout admin and doctor.
 function logout() {
     localStorage.removeItem("token");
     localStorage.removeItem("userRole");
     window.location.href = "/";
 }
 
-// Logout patient and return to the patient login page.
 function logoutPatient() {
     localStorage.removeItem("token");
     localStorage.setItem("userRole", "patient");
     window.location.href = "/pages/patientDashboard.html";
 }
 
-// Make functions accessible to other scripts.
 window.renderHeader = renderHeader;
 window.logout = logout;
 window.logoutPatient = logoutPatient;

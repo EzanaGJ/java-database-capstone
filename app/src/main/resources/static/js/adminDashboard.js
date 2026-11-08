@@ -1,11 +1,8 @@
-import { openModal } from '../components/modals.js';
 import { getDoctors, filterDoctors, saveDoctor } from './services/doctorServices.js';
+
 import { createDoctorCard } from './components/doctorCard.js';
 
-document.getElementById('addDocBtn').addEventListener('click', () => {
-    openModal('addDoctor');
-});
-
+// Load all doctors from the backend.
 async function loadDoctorCards() {
     try {
         const doctors = await getDoctors();
@@ -15,8 +12,12 @@ async function loadDoctorCards() {
     }
 }
 
+// Display doctor cards.
 function renderDoctorCards(doctors) {
     const contentDiv = document.getElementById('content');
+
+    if (!contentDiv) return;
+
     contentDiv.innerHTML = '';
 
     if (!doctors || doctors.length === 0) {
@@ -29,31 +30,27 @@ function renderDoctorCards(doctors) {
     });
 }
 
+// Search and filter doctors.
 async function filterDoctorsOnChange() {
     const searchValue = document.getElementById('searchBar').value;
     const filterTimeValue = document.getElementById('filterTime').value;
     const filterSpecialtyValue = document.getElementById('filterSpecialty').value;
 
     try {
-        const doctors = await filterDoctors(
+        const result = await filterDoctors(
             searchValue,
             filterTimeValue,
             filterSpecialtyValue
         );
 
-        renderDoctorCards(doctors);
+        renderDoctorCards(result.doctors || []);
     } catch (error) {
         console.error('Error filtering doctors:', error);
     }
 }
 
-document.getElementById('searchBar').addEventListener('input', filterDoctorsOnChange);
-document.getElementById('filterTime').addEventListener('change', filterDoctorsOnChange);
-document.getElementById('filterSpecialty').addEventListener('change', filterDoctorsOnChange);
-
-async function adminAddDoctor(event) {
-    event.preventDefault();
-
+// Add a new doctor.
+async function adminAddDoctor() {
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -61,37 +58,57 @@ async function adminAddDoctor(event) {
         return;
     }
 
-    const form = document.getElementById('addDoctorForm');
-    const formData = new FormData(form);
-
     const doctorData = {
-        name: formData.get('name'),
-        specialty: formData.get('specialty'),
-        email: formData.get('email'),
-        password: formData.get('password'),
-        mobileNo: formData.get('mobileNo'),
-        availabilityTime: formData.get('availabilityTime'),
-        availability: formData.getAll('availability')
+        name: document.getElementById('doctorName').value,
+        specialty: document.getElementById('specialization').value,
+        email: document.getElementById('doctorEmail').value,
+        password: document.getElementById('doctorPassword').value,
+        mobileNo: document.getElementById('doctorPhone').value,
+        availability: Array.from(
+            document.querySelectorAll(
+                'input[name="availability"]:checked'
+            )
+        ).map(input => input.value)
     };
 
     try {
-        await saveDoctor(doctorData, token);
+        const result = await saveDoctor(doctorData, token);
 
-        alert('Doctor added successfully.');
-        document.getElementById('addDoctorModal').style.display = 'none';
+        if (result.success) {
+            alert('Doctor added successfully.');
 
-        await loadDoctorCards();
+            document.getElementById('modal').style.display = 'none';
+
+            await loadDoctorCards();
+        } else {
+            alert(result.message);
+        }
     } catch (error) {
+        console.error('Error adding doctor:', error);
         alert(error.message || 'Failed to add doctor.');
     }
 }
 
+// Make the function accessible to modals.js.
+window.adminAddDoctor = adminAddDoctor;
+
+// Initialize dashboard.
 document.addEventListener('DOMContentLoaded', () => {
     loadDoctorCards();
 
-    const addDoctorForm = document.getElementById('addDoctorForm');
+    const searchBar = document.getElementById('searchBar');
+    const filterTime = document.getElementById('filterTime');
+    const filterSpecialty = document.getElementById('filterSpecialty');
 
-    if (addDoctorForm) {
-        addDoctorForm.addEventListener('submit', adminAddDoctor);
+    if (searchBar) {
+        searchBar.addEventListener('input', filterDoctorsOnChange);
+    }
+
+    if (filterTime) {
+        filterTime.addEventListener('change', filterDoctorsOnChange);
+    }
+
+    if (filterSpecialty) {
+        filterSpecialty.addEventListener('change', filterDoctorsOnChange);
     }
 });

@@ -1,6 +1,5 @@
+
 import { deleteDoctor } from "../services/doctorServices.js";
-import { getPatientData } from "../services/patientServices.js";
-import { showBookingOverlay } from "./modals.js";
 
 export function createDoctorCard(doctor) {
     const card = document.createElement("div");
@@ -8,7 +7,6 @@ export function createDoctorCard(doctor) {
 
     const role = localStorage.getItem("userRole");
 
-    // Doctor information
     const infoDiv = document.createElement("div");
     infoDiv.classList.add("doctor-info");
 
@@ -34,7 +32,6 @@ export function createDoctorCard(doctor) {
     infoDiv.appendChild(email);
     infoDiv.appendChild(availability);
 
-    // Action buttons
     const actionsDiv = document.createElement("div");
     actionsDiv.classList.add("card-actions");
 
@@ -48,46 +45,30 @@ export function createDoctorCard(doctor) {
                 `Are you sure you want to delete ${doctor.name}?`
             );
 
-            if (!confirmed) {
-                return;
-            }
+            if (!confirmed) return;
 
             const token = localStorage.getItem("token");
 
-            try {
-                await deleteDoctor(doctor.id, token);
+            const result = await deleteDoctor(doctor.id, token);
+
+            if (result.success) {
                 card.remove();
-            } catch (error) {
-                console.error("Failed to delete doctor:", error);
-                alert("Unable to delete this doctor. Please try again.");
+            } else {
+                alert(result.message);
             }
         });
 
         actionsDiv.appendChild(removeBtn);
-    } else if (role === "patient") {
+    } else if (role === "patient" || role === "loggedPatient") {
         const bookNow = document.createElement("button");
         bookNow.textContent = "Book Now";
         bookNow.type = "button";
 
         bookNow.addEventListener("click", () => {
-            alert("Patient needs to login first.");
-        });
-
-        actionsDiv.appendChild(bookNow);
-    } else if (role === "loggedPatient") {
-        const bookNow = document.createElement("button");
-        bookNow.textContent = "Book Now";
-        bookNow.type = "button";
-
-        bookNow.addEventListener("click", async (event) => {
-            const token = localStorage.getItem("token");
-
-            try {
-                const patientData = await getPatientData(token);
-                showBookingOverlay(event, doctor, patientData);
-            } catch (error) {
-                console.error("Failed to retrieve patient data:", error);
-                alert("Unable to load your patient information. Please log in again.");
+            if (role === "patient") {
+                alert("Patient needs to login first.");
+            } else {
+                alert("Booking functionality is not implemented yet.");
             }
         });
 
