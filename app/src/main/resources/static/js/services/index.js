@@ -57,34 +57,35 @@ window.adminLoginHandler = async function () {
 };
 
 // Handle Doctor login.
+
 window.doctorLoginHandler = async function () {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
 
-  const doctor = {
-    identifier: email,
-    password: password
-  };
+    const doctor = {
+        email: email,
+        password: password
+    };
 
-  try {
-    const response = await fetch(DOCTOR_API, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(doctor)
-    });
+    try {
+        const response = await fetch(DOCTOR_API, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(doctor)
+        });
 
-    const data = await response.json();
+        const data = await response.json();
 
-    if (response.ok) {
-      localStorage.setItem("token", data.token);
-      selectRole("doctor");
-    } else {
-      alert(data.error || "Invalid email or password.");
+        if (response.ok) {
+            localStorage.setItem("token", data.token);
+            selectRole("doctor");
+        } else {
+            alert(data.error || "Invalid email or password.");
+        }
+    } catch (error) {
+        console.error("Doctor login error:", error);
+        alert("Something went wrong. Please try again.");
     }
-  } catch (error) {
-    console.error("Doctor login error:", error);
-    alert("Something went wrong. Please try again.");
-  }
 };

@@ -7,16 +7,21 @@
 
     <title>Admin Dashboard</title>
 
+    <!-- CSS -->
     <link rel="stylesheet" th:href="@{/assets/css/adminDashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/style.css}">
 
-    <!-- Utility and rendering scripts -->
+    <!-- Utility scripts -->
     <script th:src="@{/js/render.js}" defer></script>
     <script th:src="@{/js/util.js}" defer></script>
 
     <!-- Header and footer components -->
-    <script th:src="@{/js/components/header.js}" defer></script>
-    <script th:src="@{/js/components/footer.js}" defer></script>
+    <script type="module" th:src="@{/js/components/header.js}"></script>
+    <script type="module" th:src="@{/js/components/footer.js}"></script>
+
+    <!-- Admin dashboard -->
+    <script type="module" th:src="@{/js/adminDashboard.js}"></script>
+
 </head>
 
 <body>
@@ -56,13 +61,26 @@
 
                         <select id="filterSpecialty">
                             <option value="">All Specialties</option>
+                            <option value="cardiologist">Cardiologist</option>
+                            <option value="dermatologist">Dermatologist</option>
+                            <option value="neurologist">Neurologist</option>
+                            <option value="pediatrician">Pediatrician</option>
+                            <option value="orthopedist">Orthopedist</option>
+                            <option value="gynecologist">Gynecologist</option>
+                            <option value="psychiatrist">Psychiatrist</option>
+                            <option value="dentist">Dentist</option>
+                            <option value="ophthalmologist">Ophthalmologist</option>
+                            <option value="ent">ENT Specialist</option>
+                            <option value="urologist">Urologist</option>
+                            <option value="oncologist">Oncologist</option>
+                            <option value="gastroenterologist">Gastroenterologist</option>
+                            <option value="general">General Physician</option>
                         </select>
-
                     </div>
 
                 </section>
 
-                <!-- Doctor cards are dynamically inserted here -->
+                <!-- Doctor cards -->
                 <section id="content" class="doctor-list"></section>
 
             </main>
@@ -73,7 +91,7 @@
         </div>
     </div>
 
-    <!-- Add Doctor Modal -->
+    <!-- Add Doctor / Login Modal -->
     <div id="modal" class="modal" hidden>
         <div class="modal-content">
 
@@ -83,19 +101,6 @@
 
         </div>
     </div>
-
-    <!-- Admin dashboard services -->
-    <script
-        type="module"
-        th:src="@{/js/services/adminDashboard.js}"
-        defer>
-    </script>
-
-    <script
-        type="module"
-        th:src="@{/js/components/doctorCard.js}"
-        defer>
-    </script>
 
 </body>
 </html>

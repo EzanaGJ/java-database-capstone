@@ -1,5 +1,5 @@
 
-import { getAllAppointments } from "./services/appointmentServices.js";
+import { getAllAppointments } from "./services/appointmentRecordService.js";
 import { createPatientRow } from "./components/patientRow.js";
 
 // Get dashboard elements

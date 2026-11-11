@@ -75,29 +75,70 @@ export async function saveDoctor(doctor, token) {
   }
 }
 
-// Fetch doctors matching the supplied filters.
 export async function filterDoctors(name, time, specialty) {
-  try {
-    const params = [name, time, specialty]
-      .map(value => encodeURIComponent(value ?? ""));
+    try {
+        const searchName = name?.trim() || "all";
+        const searchTime = time || "all";
+        const searchSpecialty = specialty || "all";
 
-    const response = await fetch(
-      `${DOCTOR_API}/filter/${params.join("/")}`
-    );
+        // If no filters are selected, load all doctors.
+        if (
+            searchName === "all" &&
+            searchTime === "all" &&
+            searchSpecialty === "all"
+        ) {
+            return await getDoctors();
+        }
 
-    if (!response.ok) {
-      console.error("Doctor filtering failed:", response.status);
-      return { doctors: [] };
+        const params = [
+            searchName,
+            searchTime,
+            searchSpecialty
+        ].map(value => encodeURIComponent(value));
+
+        const response = await fetch(
+            `${DOCTOR_API}/filter/${params.join("/")}`
+        );
+
+        if (!response.ok) {
+            throw new Error(`Doctor filtering failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        return Array.isArray(data)
+            ? { doctors: data }
+            : { doctors: data.doctors || [] };
+
+    } catch (error) {
+        console.error("Error filtering doctors:", error);
+        alert("Unable to filter doctors. Please try again.");
+        return { doctors: [] };
     }
+}
 
-    const data = await response.json();
+export async function loginDoctor(loginData) {
+    try {
+        const response = await fetch(`${DOCTOR_API}/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(loginData)
+        });
 
-    return Array.isArray(data)
-      ? { doctors: data }
-      : { doctors: data.doctors || [] };
-  } catch (error) {
-    console.error("Error filtering doctors:", error);
-    alert("Unable to filter doctors. Please try again.");
-    return { doctors: [] };
-  }
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(
+                data.message || data.error || "Doctor login failed."
+            );
+        }
+
+        return data;
+
+    } catch (error) {
+        console.error("Doctor login error:", error);
+        throw error;
+    }
 }

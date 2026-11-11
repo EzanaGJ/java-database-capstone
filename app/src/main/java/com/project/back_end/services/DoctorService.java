@@ -2,7 +2,6 @@
 package com.project.back_end.services;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.project.back_end.DTO.Login;
-import com.project.back_end.models.Appointment;
 import com.project.back_end.models.Doctor;
 import com.project.back_end.repo.AppointmentRepository;
 import com.project.back_end.repo.DoctorRepository;
@@ -67,6 +65,7 @@ public class DoctorService {
             doctorRepository.save(doctor);
             return 1;
         } catch (Exception e) {
+            e.printStackTrace();
             return 0;
         }
     }
@@ -82,6 +81,7 @@ public class DoctorService {
             doctorRepository.save(doctor);
             return 1;
         } catch (Exception e) {
+            e.printStackTrace();
             return 0;
         }
     }
@@ -102,6 +102,7 @@ public class DoctorService {
             doctorRepository.deleteById(id);
             return 1;
         } catch (Exception e) {
+            e.printStackTrace();
             return 0;
         }
     }
@@ -137,8 +138,8 @@ public class DoctorService {
         Map<String, Object> response = new HashMap<>();
 
         List<Doctor> doctors = (name == null || name.isBlank())
-                ? doctorRepository.findAll()
-                : doctorRepository.findByNameLike("%" + name + "%");
+                ? doctorRepository.findAllWithAvailableTimes()
+                : doctorRepository.findByNameLike(name);
 
         response.put("doctors", doctors);
         return response;
@@ -162,7 +163,7 @@ public class DoctorService {
             String name, String amOrPm) {
 
         List<Doctor> doctors =
-                doctorRepository.findByNameLike("%" + name + "%");
+                doctorRepository.findByNameLike(name);
 
         Map<String, Object> response = new HashMap<>();
         response.put("doctors", filterDoctorByTime(doctors, amOrPm));
@@ -171,11 +172,11 @@ public class DoctorService {
 
     // 10. Filter by name and specialty
     public Map<String, Object> filterDoctorByNameAndSpecility(
-            String name, String specilty) {
+            String name, String specialty) {
 
         List<Doctor> doctors =
                 doctorRepository.findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(
-                        name, specilty);
+                        name, specialty);
 
         Map<String, Object> response = new HashMap<>();
         response.put("doctors", doctors);
@@ -184,10 +185,10 @@ public class DoctorService {
 
     // 11. Filter by specialty and time
     public Map<String, Object> filterDoctorByTimeAndSpecility(
-            String specilty, String amOrPm) {
+            String specialty, String amOrPm) {
 
         List<Doctor> doctors =
-                doctorRepository.findBySpecialtyIgnoreCase(specilty);
+                doctorRepository.findBySpecialtyIgnoreCase(specialty);
 
         Map<String, Object> response = new HashMap<>();
         response.put("doctors", filterDoctorByTime(doctors, amOrPm));
@@ -195,9 +196,9 @@ public class DoctorService {
     }
 
     // 12. Filter by specialty
-    public Map<String, Object> filterDoctorBySpecility(String specilty) {
+    public Map<String, Object> filterDoctorBySpecility(String specialty) {
         List<Doctor> doctors =
-                doctorRepository.findBySpecialtyIgnoreCase(specilty);
+                doctorRepository.findBySpecialtyIgnoreCase(specialty);
 
         Map<String, Object> response = new HashMap<>();
         response.put("doctors", doctors);
@@ -206,14 +207,15 @@ public class DoctorService {
 
     // 13. Filter by time
     public Map<String, Object> filterDoctorsByTime(String amOrPm) {
-        List<Doctor> doctors = doctorRepository.findAll();
+        List<Doctor> doctors =
+                doctorRepository.findAllWithAvailableTimes();
 
         Map<String, Object> response = new HashMap<>();
         response.put("doctors", filterDoctorByTime(doctors, amOrPm));
         return response;
     }
 
-    // 14. Helper method: filter doctors by AM or PM availability
+    // 14. Filter doctors by morning or afternoon availability
     private List<Doctor> filterDoctorByTime(
             List<Doctor> doctors, String amOrPm) {
 
@@ -221,34 +223,45 @@ public class DoctorService {
             return doctors;
         }
 
-        String period = amOrPm.trim().toUpperCase();
+        String period = amOrPm.trim().toLowerCase();
 
-        if (!period.equals("AM") && !period.equals("PM")) {
+        // Support both the old AM/PM values and the dashboard values.
+        if (period.equals("am")) {
+            period = "morning";
+        } else if (period.equals("pm")) {
+            period = "afternoon";
+        }
+
+        if (!period.equals("morning") && !period.equals("afternoon")) {
             return List.of();
         }
+
+        final String selectedPeriod = period;
 
         return doctors.stream()
                 .filter(doctor -> doctor.getAvailableTimes() != null)
                 .filter(doctor -> doctor.getAvailableTimes().stream()
-                        .anyMatch(time -> isInPeriod(time, period)))
+                        .anyMatch(time -> isInPeriod(time, selectedPeriod)))
                 .collect(Collectors.toList());
     }
 
+    // 15. Check whether an availability range belongs to the selected period
     private boolean isInPeriod(String time, String period) {
         try {
-            LocalTime parsedTime = LocalTime.parse(time);
+            // Availability examples: 09:00-10:00 or 13:00-14:00
+            String startTime = time.trim().split("-")[0].trim();
+
+            LocalTime parsedTime = LocalTime.parse(startTime);
             int hour = parsedTime.getHour();
 
-            return period.equals("AM") ? hour < 12 : hour >= 12;
-        } catch (Exception e) {
-            try {
-                LocalDateTime parsedDateTime = LocalDateTime.parse(time);
-                int hour = parsedDateTime.getHour();
-
-                return period.equals("AM") ? hour < 12 : hour >= 12;
-            } catch (Exception ignored) {
-                return false;
+            if (period.equals("morning")) {
+                return hour < 12;
             }
+
+            return hour >= 12;
+
+        } catch (Exception e) {
+            return false;
         }
     }
 }
