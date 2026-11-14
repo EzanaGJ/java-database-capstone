@@ -4,8 +4,7 @@ import { getDoctors } from "../js/services/doctorServices.js";
 document.addEventListener("DOMContentLoaded", initializePage);
 
 async function initializePage() {
-  const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
-  // Get appointmentId and patientId from the URL query parameters
+  const token = localStorage.getItem("token"); 
   const urlParams = new URLSearchParams(window.location.search);
   const appointmentId = urlParams.get("appointmentId");
   const patientId = urlParams.get("patientId");
@@ -46,9 +45,8 @@ async function initializePage() {
         timeSelect.appendChild(option);
       });
 
-      // Handle form submission for updating the appointment
       document.getElementById("updateAppointmentForm").addEventListener("submit", async (e) => {
-        e.preventDefault(); // Prevent default form submission
+        e.preventDefault(); 
 
         const date = document.getElementById("appointmentDate").value;
         const time = document.getElementById("appointmentTime").value;
@@ -72,12 +70,12 @@ async function initializePage() {
           alert("Appointment updated successfully!");
           window.location.href = "/pages/patientAppointments.html"; // Redirect back to the appointments page
         } else {
-          alert("❌ Failed to update appointment: " + updateResponse.message);
+          alert("Failed to update appointment: " + updateResponse.message);
         }
       });
     })
     .catch(error => {
       console.error("Error fetching doctors:", error);
-      alert("❌ Failed to load doctor data.");
+      alert("Failed to load doctor data.");
     });
 }

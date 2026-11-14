@@ -1,4 +1,3 @@
-// loggedPatient.js 
 import { getDoctors } from './services/doctorServices.js';
 import { createDoctorCard } from './components/doctorCard.js';
 import { filterDoctors } from './services/doctorServices.js';
@@ -79,7 +78,7 @@ export function showBookingOverlay(e, doctor, patient) {
       ripple.remove();
       modalApp.remove();
     } else {
-      alert("❌ Failed to book an appointment :: " + message);
+      alert("Failed to book an appointment :: " + message);
     }
   });
 }
@@ -122,7 +121,7 @@ function filterDoctorsOnChange() {
     })
     .catch(error => {
       console.error("Failed to filter doctors:", error);
-      alert("❌ An error occurred while filtering doctors.");
+      alert("An error occurred while filtering doctors.");
     });
 }
 

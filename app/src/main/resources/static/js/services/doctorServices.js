@@ -81,13 +81,13 @@ export async function filterDoctors(name, time, specialty) {
         const searchTime = time || "all";
         const searchSpecialty = specialty || "all";
 
-        // If no filters are selected, load all doctors.
         if (
             searchName === "all" &&
             searchTime === "all" &&
             searchSpecialty === "all"
         ) {
-            return await getDoctors();
+            const doctors = await getDoctors();
+            return { doctors };
         }
 
         const params = [
@@ -106,17 +106,15 @@ export async function filterDoctors(name, time, specialty) {
 
         const data = await response.json();
 
-        return Array.isArray(data)
-            ? { doctors: data }
-            : { doctors: data.doctors || [] };
+        return {
+            doctors: Array.isArray(data) ? data : data.doctors || []
+        };
 
     } catch (error) {
         console.error("Error filtering doctors:", error);
-        alert("Unable to filter doctors. Please try again.");
-        return { doctors: [] };
+        throw error;
     }
 }
-
 export async function loginDoctor(loginData) {
     try {
         const response = await fetch(`${DOCTOR_API}/login`, {

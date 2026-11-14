@@ -2,7 +2,6 @@
 import { getAllAppointments } from "./services/appointmentRecordService.js";
 import { createPatientRow } from "./components/patientRow.js";
 
-// Get dashboard elements
 const tableBody = document.getElementById("patientTableBody");
 const searchBar = document.getElementById("searchBar");
 const todayButton = document.getElementById("todayButton");
@@ -91,7 +90,6 @@ if (todayButton) {
     });
 }
 
-// Filter appointments by date
 if (datePicker) {
     datePicker.addEventListener("change", () => {
         selectedDate = datePicker.value || new Date().toISOString().split("T")[0];
@@ -99,7 +97,6 @@ if (datePicker) {
     });
 }
 
-// Initial loading
 document.addEventListener("DOMContentLoaded", async () => {
     if (datePicker) {
         datePicker.value = selectedDate;

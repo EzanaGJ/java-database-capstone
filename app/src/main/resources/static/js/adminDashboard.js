@@ -1,8 +1,6 @@
 import { getDoctors, filterDoctors, saveDoctor } from './services/doctorServices.js';
-
 import { createDoctorCard } from './components/doctorCard.js';
 
-// Load all doctors from the backend.
 async function loadDoctorCards() {
     try {
         const doctors = await getDoctors();
@@ -12,7 +10,6 @@ async function loadDoctorCards() {
     }
 }
 
-// Display doctor cards.
 function renderDoctorCards(doctors) {
     const contentDiv = document.getElementById('content');
 
@@ -30,7 +27,6 @@ function renderDoctorCards(doctors) {
     });
 }
 
-// Search and filter doctors.
 async function filterDoctorsOnChange() {
     const searchValue = document.getElementById('searchBar').value;
     const filterTimeValue = document.getElementById('filterTime').value;
@@ -43,13 +39,17 @@ async function filterDoctorsOnChange() {
             filterSpecialtyValue
         );
 
-        renderDoctorCards(result.doctors || []);
+        const doctors = Array.isArray(result)
+            ? result
+            : result?.doctors || [];
+
+        renderDoctorCards(doctors);
+
     } catch (error) {
         console.error('Error filtering doctors:', error);
     }
 }
 
-// Add a new doctor.
 async function adminAddDoctor() {
     const token = localStorage.getItem('token');
 
@@ -63,7 +63,7 @@ async function adminAddDoctor() {
         specialty: document.getElementById('specialization').value,
         email: document.getElementById('doctorEmail').value,
         password: document.getElementById('doctorPassword').value,
-        mobileNo: document.getElementById('doctorPhone').value,
+        phone: document.getElementById('doctorPhone').value,
         availability: Array.from(
             document.querySelectorAll(
                 'input[name="availability"]:checked'
@@ -89,10 +89,8 @@ async function adminAddDoctor() {
     }
 }
 
-// Make the function accessible to modals.js.
 window.adminAddDoctor = adminAddDoctor;
 
-// Initialize dashboard.
 document.addEventListener('DOMContentLoaded', () => {
     loadDoctorCards();
 

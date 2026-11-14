@@ -85,49 +85,57 @@ public class Service {
         }
     }
 
-    public Map<String, Object> filterDoctor(
-            String name, String specialty, String time) {
+  public Map<String, Object> filterDoctor(
+        String name, String specialty, String time) {
 
-        if (name != null && !name.isBlank()
-                && specialty != null && !specialty.isBlank()
-                && time != null && !time.isBlank()) {
-            return doctorService.filterDoctorsByNameSpecilityandTime(
-                    name, specialty, time);
-        }
+    boolean hasName = name != null
+            && !name.isBlank()
+            && !name.equalsIgnoreCase("all");
 
-        if (name != null && !name.isBlank()
-                && specialty != null && !specialty.isBlank()) {
-            return doctorService.filterDoctorByNameAndSpecility(
-                    name, specialty);
-        }
+    boolean hasSpecialty = specialty != null
+            && !specialty.isBlank()
+            && !specialty.equalsIgnoreCase("all");
 
-        if (name != null && !name.isBlank()
-                && time != null && !time.isBlank()) {
-            return doctorService.filterDoctorByNameAndTime(name, time);
-        }
+    boolean hasTime = time != null
+            && !time.isBlank()
+            && !time.equalsIgnoreCase("all");
 
-        if (specialty != null && !specialty.isBlank()
-                && time != null && !time.isBlank()) {
-            return doctorService.filterDoctorByTimeAndSpecility(
-                    specialty, time);
-        }
-
-        if (name != null && !name.isBlank()) {
-            return doctorService.filterDoctorByNameAndTime(name, "");
-        }
-
-        if (specialty != null && !specialty.isBlank()) {
-            return doctorService.filterDoctorBySpecility(specialty);
-        }
-
-        if (time != null && !time.isBlank()) {
-            return doctorService.filterDoctorsByTime(time);
-        }
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("doctors", doctorService.getDoctors());
-        return response;
+    if (hasName && hasSpecialty && hasTime) {
+        return doctorService.filterDoctorsByNameSpecilityandTime(
+                name, specialty, time);
     }
+
+    if (hasName && hasSpecialty) {
+        return doctorService.filterDoctorByNameAndSpecility(
+                name, specialty);
+    }
+
+    if (hasName && hasTime) {
+        return doctorService.filterDoctorByNameAndTime(name, time);
+    }
+
+    if (hasSpecialty && hasTime) {
+        return doctorService.filterDoctorByTimeAndSpecility(
+                specialty, time);
+    }
+
+    if (hasName) {
+        return doctorService.filterDoctorByNameAndTime(name, "");
+    }
+
+    if (hasSpecialty) {
+        return doctorService.filterDoctorBySpecility(specialty);
+    }
+
+    if (hasTime) {
+        return doctorService.filterDoctorsByTime(time);
+    }
+
+    Map<String, Object> response = new HashMap<>();
+    response.put("doctors", doctorService.getDoctors());
+
+    return response;
+}
 
     public int validateAppointment(Appointment appointment) {
         try {
