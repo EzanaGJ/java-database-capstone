@@ -1,5 +1,4 @@
 
-// modals.js
 export function openModal(type) {
     let modalContent = '';
 
@@ -74,8 +73,8 @@ export function openModal(type) {
     } else if (type === 'doctorLogin') {
         modalContent = `
             <h2>Doctor Login</h2>
-            <input type="text" id="email" placeholder="Email" class="input-field">
-            <input type="password" id="password" placeholder="Password" class="input-field">
+            <input type="email" id="doctorLoginEmail" name="doctor_login_email" placeholder="Email" class="input-field" autocomplete="off">
+            <input type="password" id="doctorLoginPassword" name="doctor_login_password" placeholder="Password" class="input-field" autocomplete="new-password">
             <button class="dashboard-btn" id="doctorLoginBtn" type="button">Login</button>
         `;
 
@@ -94,30 +93,25 @@ export function openModal(type) {
 
     modalBody.innerHTML = modalContent;
 
-    // Open the modal
     modal.hidden = false;
     modal.style.display = 'block';
 
-    // Close button
     const closeButton = document.getElementById('closeModal');
 
     if (closeButton) {
         closeButton.onclick = closeModal;
     }
 
-    // Patient signup
     if (type === 'patientSignup') {
         document.getElementById('signupBtn')
             .addEventListener('click', signupPatient);
     }
 
-    // Patient login
     if (type === 'patientLogin') {
         document.getElementById('loginBtn')
             .addEventListener('click', loginPatient);
     }
 
-    // Add doctor
     if (type === 'addDoctor') {
         document.getElementById('saveDoctorBtn')
             .addEventListener('click', function () {
@@ -129,16 +123,18 @@ export function openModal(type) {
             });
     }
 
-    // Admin login
     if (type === 'adminLogin') {
         document.getElementById('adminLoginBtn')
-            .addEventListener('click', adminLoginHandler);
+            .addEventListener('click', function () {
+                window.adminLoginHandler();
+            });
     }
 
-    // Doctor login
     if (type === 'doctorLogin') {
         document.getElementById('doctorLoginBtn')
-            .addEventListener('click', doctorLoginHandler);
+            .addEventListener('click', function () {
+                window.doctorLoginHandler();
+            });
     }
 }
 
@@ -151,7 +147,6 @@ export function closeModal() {
     }
 }
 
-// Close when clicking outside the modal content
 document.addEventListener('click', function (event) {
     if (event.target.id === 'modal') {
         closeModal();
