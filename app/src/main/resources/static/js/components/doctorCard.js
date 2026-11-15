@@ -1,5 +1,6 @@
-
 import { deleteDoctor } from "../services/doctorServices.js";
+import { getPatientData } from "../services/patientServices.js";
+import { showBookingOverlay } from "../loggedPatient.js";
 
 export function createDoctorCard(doctor) {
     const card = document.createElement("div");
@@ -59,16 +60,34 @@ export function createDoctorCard(doctor) {
         });
 
         actionsDiv.appendChild(removeBtn);
-    } else if (role === "patient" || role === "loggedPatient") {
+
+    } else if (role === "patient") {
         const bookNow = document.createElement("button");
         bookNow.textContent = "Book Now";
         bookNow.type = "button";
 
         bookNow.addEventListener("click", () => {
-            if (role === "patient") {
-                alert("Patient needs to login first.");
-            } else {
-                alert("Booking functionality is not implemented yet.");
+            alert("Patient needs to login first.");
+        });
+
+        actionsDiv.appendChild(bookNow);
+
+    } else if (role === "loggedPatient") {
+        const bookNow = document.createElement("button");
+        bookNow.textContent = "Book Now";
+        bookNow.type = "button";
+
+        bookNow.addEventListener("click", async (e) => {
+            try {
+                const token = localStorage.getItem("token");
+
+                const patientData = await getPatientData(token);
+
+                showBookingOverlay(e, doctor, patientData);
+
+            } catch (error) {
+                console.error("Error fetching patient data:", error);
+                alert("Unable to retrieve patient information.");
             }
         });
 

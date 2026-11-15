@@ -41,13 +41,18 @@ async function loadAppointments() {
 
         appointments.forEach(appointment => {
             const patient = {
-                id: appointment.patient?.id ?? appointment.patientId ?? appointment.id,
+                id: appointment.patient?.id ?? appointment.patientId ?? "",
                 name: appointment.patient?.name ?? appointment.patientName ?? "",
                 phone: appointment.patient?.phone ?? appointment.phone ?? "",
                 email: appointment.patient?.email ?? appointment.email ?? ""
             };
 
-            const row = createPatientRow(patient, appointment);
+            const row = createPatientRow(
+                patient,
+                appointment.id,
+                appointment.doctor?.id ?? appointment.doctorId ?? ""
+            );
+
             tableBody.appendChild(row);
         });
 
@@ -68,16 +73,13 @@ async function loadAppointments() {
     }
 }
 
-// Search patients
 if (searchBar) {
     searchBar.addEventListener("input", () => {
-        const value = searchBar.value.trim();
-        patientName = value || "null";
+        patientName = searchBar.value.trim() || "null";
         loadAppointments();
     });
 }
 
-// Load today's appointments
 if (todayButton) {
     todayButton.addEventListener("click", () => {
         selectedDate = new Date().toISOString().split("T")[0];
@@ -100,10 +102,6 @@ if (datePicker) {
 document.addEventListener("DOMContentLoaded", async () => {
     if (datePicker) {
         datePicker.value = selectedDate;
-    }
-
-    if (typeof renderContent === "function") {
-        await renderContent();
     }
 
     await loadAppointments();

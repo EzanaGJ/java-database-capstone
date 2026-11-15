@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.time.format.DateTimeFormatter;
 
 @org.springframework.stereotype.Service
 public class Service {
@@ -85,60 +86,67 @@ public class Service {
         }
     }
 
-  public Map<String, Object> filterDoctor(
-        String name, String specialty, String time) {
+    public Map<String, Object> filterDoctor(
+            String name, String specialty, String time) {
 
-    boolean hasName = name != null
-            && !name.isBlank()
-            && !name.equalsIgnoreCase("all");
+        boolean hasName = name != null
+                && !name.isBlank()
+                && !name.equalsIgnoreCase("all");
 
-    boolean hasSpecialty = specialty != null
-            && !specialty.isBlank()
-            && !specialty.equalsIgnoreCase("all");
+        boolean hasSpecialty = specialty != null
+                && !specialty.isBlank()
+                && !specialty.equalsIgnoreCase("all");
 
-    boolean hasTime = time != null
-            && !time.isBlank()
-            && !time.equalsIgnoreCase("all");
+        boolean hasTime = time != null
+                && !time.isBlank()
+                && !time.equalsIgnoreCase("all");
 
-    if (hasName && hasSpecialty && hasTime) {
-        return doctorService.filterDoctorsByNameSpecilityandTime(
-                name, specialty, time);
+        if (hasName && hasSpecialty && hasTime) {
+            return doctorService.filterDoctorsByNameSpecilityandTime(
+                    name, specialty, time);
+        }
+
+        if (hasName && hasSpecialty) {
+            return doctorService.filterDoctorByNameAndSpecility(
+                    name, specialty);
+        }
+
+        if (hasName && hasTime) {
+            return doctorService.filterDoctorByNameAndTime(name, time);
+        }
+
+        if (hasSpecialty && hasTime) {
+            return doctorService.filterDoctorByTimeAndSpecility(
+                    specialty, time);
+        }
+
+        if (hasName) {
+            return doctorService.filterDoctorByNameAndTime(name, "");
+        }
+
+        if (hasSpecialty) {
+            return doctorService.filterDoctorBySpecility(specialty);
+        }
+
+        if (hasTime) {
+            return doctorService.filterDoctorsByTime(time);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("doctors", doctorService.getDoctors());
+
+        return response;
     }
-
-    if (hasName && hasSpecialty) {
-        return doctorService.filterDoctorByNameAndSpecility(
-                name, specialty);
-    }
-
-    if (hasName && hasTime) {
-        return doctorService.filterDoctorByNameAndTime(name, time);
-    }
-
-    if (hasSpecialty && hasTime) {
-        return doctorService.filterDoctorByTimeAndSpecility(
-                specialty, time);
-    }
-
-    if (hasName) {
-        return doctorService.filterDoctorByNameAndTime(name, "");
-    }
-
-    if (hasSpecialty) {
-        return doctorService.filterDoctorBySpecility(specialty);
-    }
-
-    if (hasTime) {
-        return doctorService.filterDoctorsByTime(time);
-    }
-
-    Map<String, Object> response = new HashMap<>();
-    response.put("doctors", doctorService.getDoctors());
-
-    return response;
-}
 
     public int validateAppointment(Appointment appointment) {
         try {
+            if (appointment == null
+                    || appointment.getDoctor() == null
+                    || appointment.getDoctor().getId() == null
+                    || appointment.getAppointmentTime() == null) {
+                return 0;
+            }
+
             Doctor doctor = doctorRepository
                     .findById(appointment.getDoctor().getId())
                     .orElse(null);
@@ -151,13 +159,14 @@ public class Service {
                     doctor.getId(),
                     appointment.getAppointmentDate());
 
-            String appointmentTime =
-                    appointment.getAppointmentTime().toString()
-                            .substring(0, 5);
+            String appointmentTime = appointment.getAppointmentTimeOnly()
+                    .format(DateTimeFormatter.ofPattern("HH:mm"));
 
-            return availableSlots.contains(appointmentTime) ? 1 : 0;
+            return availableSlots != null
+                    && availableSlots.contains(appointmentTime) ? 1 : 0;
 
         } catch (Exception e) {
+            e.printStackTrace();
             return 0;
         }
     }

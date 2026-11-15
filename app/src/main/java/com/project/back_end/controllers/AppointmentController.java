@@ -4,7 +4,9 @@ package com.project.back_end.controllers;
 import com.project.back_end.models.Appointment;
 import com.project.back_end.services.AppointmentService;
 import com.project.back_end.services.Service;
+
 import java.time.LocalDate;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +34,7 @@ public class AppointmentController {
         this.service = service;
     }
 
+    // Get all appointments for a specific date and patient
     @GetMapping("/{date}/{patientName}/{token}")
     public ResponseEntity<?> getAppointments(
             @PathVariable LocalDate date,
@@ -44,9 +47,12 @@ public class AppointmentController {
             return validation;
         }
 
-        return ResponseEntity.ok(appointmentService.getAppointment(patientName, date, token));
+        return ResponseEntity.ok(
+                appointmentService.getAppointment(patientName, date, token)
+        );
     }
 
+    // Book an appointment
     @PostMapping("/{token}")
     public ResponseEntity<?> bookAppointment(
             @PathVariable String token,
@@ -62,25 +68,26 @@ public class AppointmentController {
 
         if (result == -1) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Doctor not found");
+                    .body(Map.of("message", "Doctor not found"));
         }
 
         if (result == 0) {
             return ResponseEntity.badRequest()
-                    .body("Appointment time is not available");
+                    .body(Map.of("message", "Appointment time is not available"));
         }
 
         int bookingResult = appointmentService.bookAppointment(appointment);
 
         if (bookingResult == 1) {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body("Appointment booked successfully");
+                    .body(Map.of("message", "Appointment booked successfully"));
         }
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error booking appointment");
+                .body(Map.of("message", "Error booking appointment"));
     }
 
+    // Update an appointment
     @PutMapping("/{token}")
     public ResponseEntity<?> updateAppointment(
             @PathVariable String token,
@@ -95,6 +102,7 @@ public class AppointmentController {
         return appointmentService.updateAppointment(appointment);
     }
 
+    // Cancel an appointment
     @DeleteMapping("/{id}/{token}")
     public ResponseEntity<?> cancelAppointment(
             @PathVariable Long id,

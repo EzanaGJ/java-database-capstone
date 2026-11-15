@@ -1,7 +1,8 @@
+// patientDashboard.js
 import { getDoctors } from './services/doctorServices.js';
 import { openModal } from './components/modals.js';
 import { createDoctorCard } from './components/doctorCard.js';
-import { filterDoctors } from './services/doctorServices.js';
+import { filterDoctors } from './services/doctorServices.js';//call the same function to avoid duplication coz the functionality was same
 import { patientSignup, patientLogin } from './services/patientServices.js';
 
 
@@ -41,7 +42,7 @@ function loadDoctorCards() {
       console.error("Failed to load doctors:", error);
     });
 }
-
+// Filter Input
 document.getElementById("searchBar").addEventListener("input", filterDoctorsOnChange);
 document.getElementById("filterTime").addEventListener("change", filterDoctorsOnChange);
 document.getElementById("filterSpecialty").addEventListener("change", filterDoctorsOnChange);
@@ -77,7 +78,7 @@ function filterDoctorsOnChange() {
     })
     .catch(error => {
       console.error("Failed to filter doctors:", error);
-      alert("An error occurred while filtering doctors.");
+      alert("❌ An error occurred while filtering doctors.");
     });
 }
 
@@ -99,7 +100,7 @@ window.signupPatient = async function () {
     else alert(message);
   } catch (error) {
     console.error("Signup failed:", error);
-    alert(" An error occurred while signing up.");
+    alert("❌ An error occurred while signing up.");
   }
 };
 
@@ -123,11 +124,11 @@ window.loginPatient = async function () {
       localStorage.setItem('token', result.token)
       window.location.href = '/pages/loggedPatientDashboard.html';
     } else {
-      alert('Invalid credentials!');
+      alert('❌ Invalid credentials!');
     }
   }
   catch (error) {
-    alert(" Failed to Login : ", error);
+    alert("❌ Failed to Login : ", error);
     console.log("Error :: loginPatient :: ", error)
   }
 
