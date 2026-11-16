@@ -7,6 +7,7 @@ import com.project.back_end.services.Service;
 
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.HashMap;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,26 +31,28 @@ public class AppointmentController {
     public AppointmentController(
             AppointmentService appointmentService,
             Service service) {
+
         this.appointmentService = appointmentService;
         this.service = service;
     }
 
-    // Get all appointments for a specific date and patient
+    // Get appointments
     @GetMapping("/{date}/{patientName}/{token}")
     public ResponseEntity<?> getAppointments(
             @PathVariable LocalDate date,
             @PathVariable String patientName,
             @PathVariable String token) {
 
-        ResponseEntity<?> validation = service.validateToken(token, "doctor");
+        ResponseEntity<?> validation =
+                service.validateToken(token, "doctor");
 
         if (!validation.getStatusCode().is2xxSuccessful()) {
             return validation;
         }
 
         return ResponseEntity.ok(
-                appointmentService.getAppointment(patientName, date, token)
-        );
+                appointmentService.getAppointment(
+                        patientName, date, token));
     }
 
     // Book an appointment
@@ -58,7 +61,8 @@ public class AppointmentController {
             @PathVariable String token,
             @RequestBody Appointment appointment) {
 
-        ResponseEntity<?> validation = service.validateToken(token, "patient");
+        ResponseEntity<?> validation =
+                service.validateToken(token, "patient");
 
         if (!validation.getStatusCode().is2xxSuccessful()) {
             return validation;
@@ -73,18 +77,32 @@ public class AppointmentController {
 
         if (result == 0) {
             return ResponseEntity.badRequest()
-                    .body(Map.of("message", "Appointment time is not available"));
+                    .body(Map.of(
+                            "message",
+                            "Appointment time is not available"));
         }
 
-        int bookingResult = appointmentService.bookAppointment(appointment);
+        try {
+            appointmentService.bookAppointment(appointment, token);
 
-        if (bookingResult == 1) {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(Map.of("message", "Appointment booked successfully"));
-        }
+                    .body(Map.of(
+                            "message",
+                            "Appointment booked successfully"));
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("message", "Error booking appointment"));
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            Map<String, String> response = new HashMap<>();
+
+            response.put("message", "Error booking appointment");
+            response.put("error", e.getMessage() != null
+                    ? e.getMessage()
+                    : "Unknown database error");
+
+            return ResponseEntity.status(
+                    HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
     // Update an appointment
@@ -93,7 +111,8 @@ public class AppointmentController {
             @PathVariable String token,
             @RequestBody Appointment appointment) {
 
-        ResponseEntity<?> validation = service.validateToken(token, "patient");
+        ResponseEntity<?> validation =
+                service.validateToken(token, "patient");
 
         if (!validation.getStatusCode().is2xxSuccessful()) {
             return validation;
@@ -108,7 +127,8 @@ public class AppointmentController {
             @PathVariable Long id,
             @PathVariable String token) {
 
-        ResponseEntity<?> validation = service.validateToken(token, "patient");
+        ResponseEntity<?> validation =
+                service.validateToken(token, "patient");
 
         if (!validation.getStatusCode().is2xxSuccessful()) {
             return validation;

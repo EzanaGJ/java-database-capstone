@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
 
 @org.springframework.stereotype.Service
 public class Service {
@@ -34,6 +34,7 @@ public class Service {
             PatientRepository patientRepository,
             DoctorService doctorService,
             PatientService patientService) {
+
         this.tokenService = tokenService;
         this.adminRepository = adminRepository;
         this.doctorRepository = doctorRepository;
@@ -44,11 +45,13 @@ public class Service {
 
     public ResponseEntity<Map<String, String>> validateToken(
             String token, String user) {
+
         Map<String, String> response = new HashMap<>();
 
         try {
             if (!tokenService.validateToken(token, user)) {
                 response.put("error", "Invalid or expired token");
+
                 return ResponseEntity.status(401).body(response);
             }
 
@@ -56,12 +59,14 @@ public class Service {
 
         } catch (Exception e) {
             response.put("error", "Invalid or expired token");
+
             return ResponseEntity.status(401).body(response);
         }
     }
 
     public ResponseEntity<Map<String, String>> validateAdmin(
             Admin receivedAdmin) {
+
         Map<String, String> response = new HashMap<>();
 
         try {
@@ -70,18 +75,23 @@ public class Service {
 
             if (admin == null
                     || !admin.getPassword().equals(receivedAdmin.getPassword())) {
+
                 response.put("error", "Invalid username or password");
+
                 return ResponseEntity.status(401).body(response);
             }
 
             String token = tokenService.generateToken(admin.getUsername());
+
             response.put("token", token);
 
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             e.printStackTrace();
+
             response.put("error", "Internal server error");
+
             return ResponseEntity.internalServerError().body(response);
         }
     }
@@ -133,17 +143,45 @@ public class Service {
         }
 
         Map<String, Object> response = new HashMap<>();
+
         response.put("doctors", doctorService.getDoctors());
 
         return response;
     }
 
+    // Extract the start and end of an availability slot.
+    // Supports "09:00" and "09:00-10:00".
+    private boolean isAppointmentWithinSlot(
+            String slot, LocalTime appointmentTime) {
+
+        try {
+            String[] parts = slot.split("-", 2);
+
+            LocalTime start = LocalTime.parse(parts[0].trim());
+
+            if (parts.length == 1) {
+                return appointmentTime.equals(start);
+            }
+
+            LocalTime end = LocalTime.parse(parts[1].trim());
+
+            return !appointmentTime.isBefore(start)
+                    && appointmentTime.isBefore(end);
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public int validateAppointment(Appointment appointment) {
+
         try {
             if (appointment == null
                     || appointment.getDoctor() == null
                     || appointment.getDoctor().getId() == null
-                    || appointment.getAppointmentTime() == null) {
+                    || appointment.getAppointmentTime() == null
+                    || appointment.getAppointmentDate() == null
+                    || appointment.getAppointmentTimeOnly() == null) {
                 return 0;
             }
 
@@ -155,15 +193,30 @@ public class Service {
                 return -1;
             }
 
-            List<String> availableSlots = doctorService.getDoctorAvailability(
-                    doctor.getId(),
-                    appointment.getAppointmentDate());
+            List<String> availableSlots =
+                    doctorService.getDoctorAvailability(
+                            doctor.getId(),
+                            appointment.getAppointmentDate());
 
-            String appointmentTime = appointment.getAppointmentTimeOnly()
-                    .format(DateTimeFormatter.ofPattern("HH:mm"));
+            LocalTime appointmentTime =
+                    appointment.getAppointmentTimeOnly();
 
-            return availableSlots != null
-                    && availableSlots.contains(appointmentTime) ? 1 : 0;
+            System.out.println("Doctor ID: " + doctor.getId());
+            System.out.println("Appointment date: "
+                    + appointment.getAppointmentDate());
+            System.out.println("Selected appointment time: "
+                    + appointmentTime);
+            System.out.println("Available slots: " + availableSlots);
+
+            boolean isAvailable = availableSlots != null
+                    && availableSlots.stream()
+                            .anyMatch(slot ->
+                                    isAppointmentWithinSlot(
+                                            slot, appointmentTime));
+
+            System.out.println("Appointment available: " + isAvailable);
+
+            return isAvailable ? 1 : 0;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -178,6 +231,7 @@ public class Service {
 
     public ResponseEntity<Map<String, String>> validatePatientLogin(
             Login login) {
+
         Map<String, String> response = new HashMap<>();
 
         try {
@@ -185,24 +239,30 @@ public class Service {
 
             if (patient == null
                     || !patient.getPassword().equals(login.getPassword())) {
+
                 response.put("error", "Invalid email or password");
+
                 return ResponseEntity.status(401).body(response);
             }
 
             String token = tokenService.generateToken(patient.getEmail());
+
             response.put("token", token);
 
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             e.printStackTrace();
+
             response.put("error", "Internal server error");
+
             return ResponseEntity.internalServerError().body(response);
         }
     }
 
     public ResponseEntity<Map<String, Object>> filterPatient(
             String condition, String name, String token) {
+
         Map<String, Object> response = new HashMap<>();
 
         try {
@@ -212,23 +272,30 @@ public class Service {
 
             if (patient == null) {
                 response.put("error", "Patient not found");
+
                 return ResponseEntity.status(404).body(response);
             }
 
             ResponseEntity<Map<String, Object>> result;
 
-            boolean hasCondition = condition != null && !condition.isBlank();
-            boolean hasName = name != null && !name.isBlank();
+            boolean hasCondition = condition != null
+                    && !condition.isBlank();
+
+            boolean hasName = name != null
+                    && !name.isBlank();
 
             if (hasCondition && hasName) {
                 result = patientService.filterByDoctorAndCondition(
                         condition, name, patient.getId());
+
             } else if (hasCondition) {
                 result = patientService.filterByCondition(
                         condition, patient.getId());
+
             } else if (hasName) {
                 result = patientService.filterByDoctor(
                         name, patient.getId());
+
             } else {
                 result = patientService.getPatientAppointment(
                         patient.getId(), token);
@@ -238,6 +305,7 @@ public class Service {
 
         } catch (Exception e) {
             response.put("error", "Internal server error");
+
             return ResponseEntity.internalServerError().body(response);
         }
     }

@@ -34,24 +34,63 @@ public class DoctorService {
         this.tokenService = tokenService;
     }
 
+    // Convert an availability value into its start time.
+    // Supports "09:00" and "09:00-10:00".
+    private LocalTime getSlotStart(String slot) {
+        try {
+            String start = slot.trim().split("-", 2)[0].trim();
+            return LocalTime.parse(start);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // Check whether a booked appointment belongs to an availability slot.
+    private boolean isTimeInSlot(String slot, LocalTime bookedTime) {
+        try {
+            String[] parts = slot.split("-", 2);
+
+            LocalTime start = LocalTime.parse(parts[0].trim());
+
+            if (parts.length == 1) {
+                return bookedTime.equals(start);
+            }
+
+            LocalTime end = LocalTime.parse(parts[1].trim());
+
+            return !bookedTime.isBefore(start)
+                    && bookedTime.isBefore(end);
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     // 1. Get available time slots for a doctor on a specific date
     public List<String> getDoctorAvailability(Long doctorId, LocalDate date) {
+
         Doctor doctor = doctorRepository.findById(doctorId).orElse(null);
 
-        if (doctor == null || doctor.getAvailableTimes() == null) {
+        if (doctor == null
+                || doctor.getAvailableTimes() == null
+                || date == null) {
             return List.of();
         }
 
-        List<String> bookedTimes = appointmentRepository.findAll().stream()
+        List<LocalTime> bookedTimes = appointmentRepository.findAll().stream()
                 .filter(a -> a.getDoctor() != null
                         && a.getDoctor().getId().equals(doctorId))
                 .filter(a -> a.getAppointmentTime() != null
                         && a.getAppointmentTime().toLocalDate().equals(date))
-                .map(a -> a.getAppointmentTime().toLocalTime().toString())
+                .map(a -> a.getAppointmentTime().toLocalTime())
                 .collect(Collectors.toList());
 
         return doctor.getAvailableTimes().stream()
-                .filter(time -> !bookedTimes.contains(time))
+                .filter(slot -> slot != null && !slot.isBlank())
+                .filter(slot -> getSlotStart(slot) != null)
+                .filter(slot -> bookedTimes.stream()
+                        .noneMatch(bookedTime ->
+                                isTimeInSlot(slot, bookedTime)))
                 .collect(Collectors.toList());
     }
 
@@ -64,6 +103,7 @@ public class DoctorService {
 
             doctorRepository.save(doctor);
             return 1;
+
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
@@ -80,6 +120,7 @@ public class DoctorService {
 
             doctorRepository.save(doctor);
             return 1;
+
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
@@ -100,7 +141,9 @@ public class DoctorService {
 
             appointmentRepository.deleteAllByDoctorId(id);
             doctorRepository.deleteById(id);
+
             return 1;
+
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
@@ -117,17 +160,22 @@ public class DoctorService {
             if (doctor == null
                     || !doctor.getPassword().equals(login.getPassword())) {
                 response.put("error", "Invalid email or password");
+
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(response);
             }
 
             String token = tokenService.generateToken(login.getEmail());
+
             response.put("token", token);
+
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             e.printStackTrace();
+
             response.put("error", "Unable to validate doctor login");
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(response);
         }
@@ -142,6 +190,7 @@ public class DoctorService {
                 : doctorRepository.findByNameLike(name);
 
         response.put("doctors", doctors);
+
         return response;
     }
 
@@ -154,7 +203,9 @@ public class DoctorService {
                         name, specialty);
 
         Map<String, Object> response = new HashMap<>();
+
         response.put("doctors", filterDoctorByTime(doctors, amOrPm));
+
         return response;
     }
 
@@ -162,11 +213,12 @@ public class DoctorService {
     public Map<String, Object> filterDoctorByNameAndTime(
             String name, String amOrPm) {
 
-        List<Doctor> doctors =
-                doctorRepository.findByNameLike(name);
+        List<Doctor> doctors = doctorRepository.findByNameLike(name);
 
         Map<String, Object> response = new HashMap<>();
+
         response.put("doctors", filterDoctorByTime(doctors, amOrPm));
+
         return response;
     }
 
@@ -179,7 +231,9 @@ public class DoctorService {
                         name, specialty);
 
         Map<String, Object> response = new HashMap<>();
+
         response.put("doctors", doctors);
+
         return response;
     }
 
@@ -191,27 +245,35 @@ public class DoctorService {
                 doctorRepository.findBySpecialtyIgnoreCase(specialty);
 
         Map<String, Object> response = new HashMap<>();
+
         response.put("doctors", filterDoctorByTime(doctors, amOrPm));
+
         return response;
     }
 
     // 12. Filter by specialty
     public Map<String, Object> filterDoctorBySpecility(String specialty) {
+
         List<Doctor> doctors =
                 doctorRepository.findBySpecialtyIgnoreCase(specialty);
 
         Map<String, Object> response = new HashMap<>();
+
         response.put("doctors", doctors);
+
         return response;
     }
 
     // 13. Filter by time
     public Map<String, Object> filterDoctorsByTime(String amOrPm) {
+
         List<Doctor> doctors =
                 doctorRepository.findAllWithAvailableTimes();
 
         Map<String, Object> response = new HashMap<>();
+
         response.put("doctors", filterDoctorByTime(doctors, amOrPm));
+
         return response;
     }
 
@@ -225,14 +287,14 @@ public class DoctorService {
 
         String period = amOrPm.trim().toLowerCase();
 
-        // Support both the old AM/PM values and the dashboard values.
         if (period.equals("am")) {
             period = "morning";
         } else if (period.equals("pm")) {
             period = "afternoon";
         }
 
-        if (!period.equals("morning") && !period.equals("afternoon")) {
+        if (!period.equals("morning")
+                && !period.equals("afternoon")) {
             return List.of();
         }
 
@@ -248,10 +310,12 @@ public class DoctorService {
     // 15. Check whether an availability range belongs to the selected period
     private boolean isInPeriod(String time, String period) {
         try {
-            // Availability examples: 09:00-10:00 or 13:00-14:00
-            String startTime = time.trim().split("-")[0].trim();
+            LocalTime parsedTime = getSlotStart(time);
 
-            LocalTime parsedTime = LocalTime.parse(startTime);
+            if (parsedTime == null) {
+                return false;
+            }
+
             int hour = parsedTime.getHour();
 
             if (period.equals("morning")) {

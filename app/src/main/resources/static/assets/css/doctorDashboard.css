@@ -170,3 +170,27 @@ body {
         font-size: 11px;
     }
 }
+.prescription-btn {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 6px;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    vertical-align: middle;
+}
+
+.prescription-btn:hover {
+    transform: scale(1.15);
+    background-color: #f0f0f0;
+}
+
+.prescription-btn:active {
+    transform: scale(0.95);
+}
+
+#patientTable td:last-child {
+    text-align: center;
+    vertical-align: middle;
+}
