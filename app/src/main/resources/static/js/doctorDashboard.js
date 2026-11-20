@@ -1,13 +1,15 @@
 
+import { API_BASE_URL } from "./config/config.js";
 import { getAllAppointments } from "./services/appointmentRecordService.js";
 import { createPatientRow } from "./components/patientRows.js";
+
+const APPOINTMENT_API = `${API_BASE_URL}/appointments`;
 
 const tableBody = document.getElementById("patientTableBody");
 const searchBar = document.getElementById("searchBar");
 const todayButton = document.getElementById("todayButton");
 const datePicker = document.getElementById("datePicker");
 
-// Get the current date using local time
 function getLocalDate() {
     const today = new Date();
 
@@ -18,18 +20,19 @@ function getLocalDate() {
     return `${year}-${month}-${day}`;
 }
 
-let selectedDate = getLocalDate();
+// Empty date means show all appointments
+let selectedDate = "";
 const token = localStorage.getItem("token");
 let patientName = "all";
 
-// Display a message inside the table
+// Display messages inside the table
 function showMessage(message) {
     tableBody.innerHTML = "";
 
     const row = document.createElement("tr");
     const cell = document.createElement("td");
 
-    cell.colSpan = 5;
+    cell.colSpan = 8;
     cell.classList.add("noPatientRecord");
     cell.textContent = message;
 
@@ -37,29 +40,48 @@ function showMessage(message) {
     tableBody.appendChild(row);
 }
 
-// Load appointments
+// Get all appointments or filter by date
 async function loadAppointments() {
+
     if (!tableBody) {
         console.error("Patient table body was not found.");
         return;
     }
 
     if (!token) {
-        console.error("Doctor token was not found.");
         showMessage("Please log in again.");
         return;
     }
 
     try {
-        const response = await getAllAppointments(
-            selectedDate,
-            patientName,
-            token
-        );
+        let response;
+
+        if (selectedDate) {
+
+            // Get appointments for selected date
+            response = await getAllAppointments(
+                selectedDate,
+                patientName,
+                token
+            );
+
+        } else {
+
+            // Get all appointments for this doctor
+            const url =
+                `${APPOINTMENT_API}/all/${encodeURIComponent(patientName)}/${token}`;
+
+            const result = await fetch(url);
+
+            if (!result.ok) {
+                throw new Error("Failed to fetch appointments");
+            }
+
+            response = await result.json();
+        }
 
         console.log("Raw appointments response:", response);
 
-        // Handle different possible response structures
         let appointments = [];
 
         if (Array.isArray(response)) {
@@ -69,7 +91,7 @@ async function loadAppointments() {
         } else if (Array.isArray(response?.data)) {
             appointments = response.data;
         } else {
-            console.error("Unexpected appointments response:", response);
+            console.error("Unexpected response:", response);
             showMessage("Could not read appointments from the server.");
             return;
         }
@@ -77,11 +99,12 @@ async function loadAppointments() {
         tableBody.innerHTML = "";
 
         if (appointments.length === 0) {
-            showMessage("No appointments found for this date.");
+            showMessage("No appointments found.");
             return;
         }
 
         appointments.forEach(appointment => {
+
             const patient = {
                 id: appointment.patient?.id ?? appointment.patientId ?? "",
                 name: appointment.patient?.name ?? appointment.patientName ?? "",
@@ -95,6 +118,39 @@ async function loadAppointments() {
                 appointment.doctor?.id ?? appointment.doctorId ?? ""
             );
 
+            // Appointment date
+            const dateCell = document.createElement("td");
+
+            const appointmentDate = appointment.appointmentDate;
+
+            if (appointmentDate) {
+                const [year, month, day] = appointmentDate.split("-");
+                dateCell.textContent = `${day}/${month}/${year}`;
+            } else {
+                dateCell.textContent = "N/A";
+            }
+
+            // Appointment time
+            const timeCell = document.createElement("td");
+            timeCell.textContent =
+                appointment.appointmentTimeOnly ?? "N/A";
+
+            // Appointment status
+            const statusCell = document.createElement("td");
+
+            if (Number(appointment.status) === 0) {
+                statusCell.textContent = "Scheduled";
+            } else if (Number(appointment.status) === 1) {
+                statusCell.textContent = "Completed";
+            } else {
+                statusCell.textContent = "Unknown";
+            }
+
+            // Add columns before prescription column
+            row.insertBefore(dateCell, row.children[4]);
+            row.insertBefore(timeCell, row.children[5]);
+            row.insertBefore(statusCell, row.children[6]);
+
             tableBody.appendChild(row);
         });
 
@@ -106,6 +162,7 @@ async function loadAppointments() {
     }
 }
 
+// Search by patient name
 if (searchBar) {
     searchBar.addEventListener("input", () => {
         patientName = searchBar.value.trim() || "all";
@@ -113,6 +170,7 @@ if (searchBar) {
     });
 }
 
+// Today's appointments
 if (todayButton) {
     todayButton.addEventListener("click", () => {
         selectedDate = getLocalDate();
@@ -125,15 +183,16 @@ if (todayButton) {
     });
 }
 
+// Filter by selected date
 if (datePicker) {
     datePicker.addEventListener("change", () => {
-        selectedDate = datePicker.value || getLocalDate();
+        selectedDate = datePicker.value || "";
+
         loadAppointments();
     });
+
+    datePicker.value = "";
 }
 
-if (datePicker) {
-    datePicker.value = selectedDate;
-}
-
+// Initially display all appointments
 loadAppointments();

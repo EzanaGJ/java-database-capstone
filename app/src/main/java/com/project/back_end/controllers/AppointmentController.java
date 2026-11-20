@@ -36,7 +36,7 @@ public class AppointmentController {
         this.service = service;
     }
 
-    // Get appointments
+    // Get appointments for a specific date
     @GetMapping("/{date}/{patientName}/{token}")
     public ResponseEntity<?> getAppointments(
             @PathVariable LocalDate date,
@@ -53,6 +53,24 @@ public class AppointmentController {
         return ResponseEntity.ok(
                 appointmentService.getAppointment(
                         patientName, date, token));
+    }
+
+    // Get ALL appointments for the logged-in doctor
+    @GetMapping("/all/{patientName}/{token}")
+    public ResponseEntity<?> getAllAppointments(
+            @PathVariable String patientName,
+            @PathVariable String token) {
+
+        ResponseEntity<?> validation =
+                service.validateToken(token, "doctor");
+
+        if (!validation.getStatusCode().is2xxSuccessful()) {
+            return validation;
+        }
+
+        return ResponseEntity.ok(
+                appointmentService.getAllAppointments(
+                        patientName, token));
     }
 
     // Book an appointment
